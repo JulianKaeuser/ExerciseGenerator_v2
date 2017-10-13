@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ExerciseMainWindow</class>
+ <widget class="QMainWindow" name="ExerciseMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1196</width>
+    <height>684</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ExerciseMainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QListWidget" name="toolsListWidget">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>50</y>
+      <width>141</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Spieler</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Stürmer</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Verteidiger</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Gruppe</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Stürmergruppe</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Verteidigergruppe</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Puck</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Pucks</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Pass</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Laufweg</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Laufweg mit Puck</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Stickhandling</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Schlagschuss</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Schlenzer</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Rückwärts</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Umdrehen</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="toolsListWidgetDescriptorLabel">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>30</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Werkzeuge</string>
+    </property>
+    <property name="buddy">
+     <cstring>toolsListWidget</cstring>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>0</y>
+      <width>16</width>
+      <height>641</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="timeslotsListWidget">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>330</y>
+      <width>61</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <item>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="timeslotsListWidgetDescriptorLabel">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>310</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Zeitschritte</string>
+    </property>
+    <property name="buddy">
+     <cstring>timeslotsListWidget</cstring>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="timeslotFieldCanvasSelectComboBox">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>410</y>
+      <width>79</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Feld</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Feld quer</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Drittel</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Halbfeld</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Mitte</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="timeslotsAddPushButton">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>330</y>
+      <width>84</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hinzufügen</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="timeslotsDeletePushButton">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>370</y>
+      <width>84</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Löschen</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="toolColorSelectComboBox">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>270</y>
+      <width>71</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Schwarz</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Rot</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Weiß</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Gelb</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Grün</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Blau</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QSlider" name="gifSpeedSlider">
+    <property name="geometry">
+     <rect>
+      <x>1000</x>
+      <y>590</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="animationShowPushButton">
+    <property name="geometry">
+     <rect>
+      <x>1000</x>
+      <y>530</y>
+      <width>141</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Animation abspielen</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="animationLoopCheckbox">
+    <property name="geometry">
+     <rect>
+      <x>1000</x>
+      <y>560</y>
+      <width>91</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Schleife</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="activeTimeslotGraphicLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>90</y>
+      <width>661</width>
+      <height>471</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border-top-color: rgb(204, 0, 0);
+border-color: rgb(204, 0, 0);
+border-color: rgb(239, 41, 41);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="timeslotSelectedLCDNumber">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>50</y>
+      <width>64</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;Cantarell&quot;;</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1196</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuDatei">
+    <property name="title">
+     <string>Datei</string>
+    </property>
+    <addaction name="actionNeu"/>
+    <addaction name="separator"/>
+    <addaction name="actionExportieren"/>
+    <addaction name="separator"/>
+    <addaction name="actionLaden"/>
+    <addaction name="actionSpeichern_unter"/>
+    <addaction name="actionBeenden"/>
+   </widget>
+   <widget class="QMenu" name="menuBearbeiten">
+    <property name="title">
+     <string>Bearbeiten</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuInfo">
+    <property name="title">
+     <string>Hilfe</string>
+    </property>
+    <addaction name="action_ber"/>
+    <addaction name="separator"/>
+    <addaction name="actionHilfe"/>
+   </widget>
+   <addaction name="menuDatei"/>
+   <addaction name="menuBearbeiten"/>
+   <addaction name="menuInfo"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_ber">
+   <property name="text">
+    <string>Über</string>
+   </property>
+  </action>
+  <action name="actionHilfe">
+   <property name="text">
+    <string>Hilfe</string>
+   </property>
+  </action>
+  <action name="actionNeu">
+   <property name="text">
+    <string>Neu</string>
+   </property>
+  </action>
+  <action name="actionExportieren">
+   <property name="text">
+    <string>Exportieren</string>
+   </property>
+  </action>
+  <action name="actionLaden">
+   <property name="text">
+    <string>Laden</string>
+   </property>
+  </action>
+  <action name="actionSpeichern_unter">
+   <property name="text">
+    <string>Speichern unter</string>
+   </property>
+  </action>
+  <action name="actionBeenden">
+   <property name="text">
+    <string>Beenden</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>timeslotsListWidget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>toolColorSelectComboBox</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1020</x>
+     <y>457</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1095</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotFieldCanvasSelectComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>assignSelectedTimeslotFieldCanvas(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1099</x>
+     <y>465</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotsAddPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>addTimeSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1101</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotsDeletePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>confirmDeletion()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1101</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolColorSelectComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>changeSelectedToolColor(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1095</x>
+     <y>325</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolsListWidget</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>changeCurrentCursorType(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1060</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>animationShowPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>openAnimationWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1070</x>
+     <y>585</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>animationLoopCheckbox</sender>
+   <signal>clicked()</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1045</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gifSpeedSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1079</x>
+     <y>639</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotFieldCanvasSelectComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1099</x>
+     <y>465</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotsAddPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1101</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotsDeletePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1101</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolColorSelectComboBox</sender>
+   <signal>activated(int)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1095</x>
+     <y>325</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolsListWidget</sender>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>closeAnimationWindowOnAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1060</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeslotsListWidget</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ExerciseMainWindow</receiver>
+   <slot>updateLCDNumber(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1020</x>
+     <y>457</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>597</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>closeAnimationWindowOnActionSignal()</signal>
+  <signal>changeCursorSignal()</signal>
+  <signal>changeCursorSignal(QListWidgetItem*)</signal>
+  <slot>updateFieldCanvasSelectComboBoxDisplayOnTimeslotsListWidgetClick(QListWidgetItem)</slot>
+  <slot>addTimeSlot(QListWidgetItem*)</slot>
+  <slot>deleteSelectedTimeslot(QListWidgetItem*)</slot>
+  <slot>changeSelectedToolCursor(QColor,QListWidgetItem*)</slot>
+  <slot>openAnimationWindow(bool,int)</slot>
+  <slot>closeAnimationWindowOnAction()</slot>
+  <slot>confirmDeletion()</slot>
+  <slot>assignSelectedTimeslotFieldCanvas(int)</slot>
+  <slot>updateFieldCanvasSelectorOnTimeslotSelect(int)</slot>
+  <slot>addTimeSlot()</slot>
+  <slot>changeSelectedToolColor(int)</slot>
+  <slot>changeCurrentCursorType(QListWidgetItem*)</slot>
+  <slot>openAnimationWindow()</slot>
+  <slot>updateLCDNumber(QListWidgetItem*)</slot>
+ </slots>
+</ui>
