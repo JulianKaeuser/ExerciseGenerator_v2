@@ -12,7 +12,6 @@
 class TimeslotData;
 
 
-typedef std::shared_ptr<QImage> QImagePointer;
 typedef std::shared_ptr<QPixmap> QPixmapPointer;
 
 typedef std::shared_ptr<TimeslotData> TimeslotDataPointer;

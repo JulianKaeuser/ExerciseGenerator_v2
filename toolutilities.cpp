@@ -311,7 +311,7 @@ QPoint* getMappedPoint(QPoint *point, QImage *image, PaintLabel *label){
  * @return
  */
 QColor* getColorOfArrowByTool(toolType type) {
-    DEBUG(getColorOfArrowByTool(toolType) called);
+    //DEBUG(getColorOfArrowByTool(toolType) called);
     QColor t = Qt::blue;
     switch(type){
     case(puck):{

@@ -94,6 +94,8 @@ public:
     QMenu *menuInfo;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
+
+    PaintLabel *arrowLabel = Q_NULLPTR;
     void addExerciseItem(ExerciseItem*);
     QCursor* getCurrentSelectedCursor();
     toolType getCurrentSelectedToolType();
@@ -133,6 +135,9 @@ private:
 
     int currentNumRotationsRight;
     int currentNumRotationsLeft;
+
+    // avoid loop at one point
+    bool repaintFlag = true;
 
     //methods
     void scaleActiveTimeslotGraphicsViewLabel(int);

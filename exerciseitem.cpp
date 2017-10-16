@@ -1,4 +1,5 @@
 #include "exerciseitem.h"
+#include <memory>
 
 /*
  *
@@ -25,9 +26,9 @@ private:
  * @param type
  * @param color
  */
-ExerciseItem::ExerciseItem(QPoint *point, QImage *image, toolType type, bool isDragged, PointList *list):
+ExerciseItem::ExerciseItem(QPoint *point, const QImage& icon, toolType type, paintType isDragged, PointList *list):
     point(*point),
-    image(*image),
+    icon(std::make_unique<QImage>(icon)),
     type(type),
     isDragged(isDragged),
     movementPoints(list)
@@ -41,7 +42,7 @@ ExerciseItem::ExerciseItem(QPoint *point, QImage *image, toolType type, bool isD
  */
 ExerciseItem::ExerciseItem(const ExerciseItem &other){
     this->point = other.point;
-    this->image = other.image;
+    this->icon = std::make_unique<QImage>(*other.icon);
     this->type = other.type;
     this->isDragged = other.isDragged;
     this->movementPoints = other.movementPoints;

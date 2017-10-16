@@ -4,6 +4,8 @@
 #include "exercisemainwindow.h"
 #include <QPixmap>
 #include <QPoint>
+#include <QPainter>
+#include <QPen>
 
 #include <iostream>
 #define _LIT(x) # x
@@ -14,6 +16,11 @@
 
 #define OFFSET_POINT_LARGE(x) ((x += QPoint(20, 0)))
 #define OFFSET_POINT_SMALL(x) ((x += QPoint(5, -5)))
+
+#define MAX(x,y) ((x<y) ? y : x)
+#define MIN(x,y) ((x<y) ? x : y)
+
+#define ABS(x) if (x<0){ x = -x;}
 
 /*
  * enum toolType{
@@ -40,31 +47,36 @@
 */
 
 /**
+  Returns the type of action for this tool.
+  1 = draggable
+  -1 =arrow event
+  0 = single
  * @brief isPressEventTool
  * @param type
  * @return
  */
-bool isPressEventTool(toolType type){
-    LDEBUG(type);
-    bool t = false;
+paintType isPressEventTool(toolType type){
+    //LDEBUG("isPressEventTool: " <<type);
+    // return -1 if arrow type, 0 if nothing, 1 if drag
+    int t = 0;
     switch(type){
     case(puck):{
-        t = true;
+        t = 1;
         break;
     }
     case(pucks):{
         break;
     }
     case(player):{
-        t = true;
+        t = 1;
         break;
     }
     case(forward):{
-        t = true;
+        t = 1;
         break;
     }
     case(defender):{
-        t = true;
+        t = 1;
         break;
     }
     case(group):{
@@ -87,22 +99,24 @@ bool isPressEventTool(toolType type){
     }
         //non-elemnt types
     case(turn):{
+        t = -1;
         break;
     }
     case(pass):{
+        t = -1;
         break;
     }
 
     case(stickhandling):{
-        t = true;
+        t = 1;
         break;
     }
     case(slapshot):{
-        t = true;
+        t = -1;
         break;
     }
     case(wristshot):{
-        t = true;
+        t = -1;
         break;
     }
     case(runway):{
@@ -113,6 +127,7 @@ bool isPressEventTool(toolType type){
         break;
     }
     case(backwards):{
+        t = -1;
         break;
     }
 
@@ -120,7 +135,7 @@ bool isPressEventTool(toolType type){
         break;
     }
     }
-    return t;
+    return static_cast<paintType> (t);
 }; // isPressEventTool
 
 PaintLabel::PaintLabel(QWidget *parent): QLabel(parent){
@@ -128,32 +143,45 @@ PaintLabel::PaintLabel(QWidget *parent): QLabel(parent){
 }
 
 void PaintLabel::mousePressEvent(QMouseEvent *event){
-    DEBUG(label pressed);
+    DEBUG(mousePressVenet:label pressed);
     QPoint point = event->pos();
     if(mw->labelNotClickable){
         return;
     }
-   toolType type =  mw->getCurrentSelectedToolType();
-   if (isPressEventTool(type)){
-       QImage image = mw->getCurrentSelectedCursor()->pixmap().toImage();
-       toolType t = mw->getCurrentSelectedToolType();
 
-       (this->draggedItem) = new ExerciseItem(&point, &image, t, true, new PointList());
+   QImage icon = mw->getCurrentSelectedCursor()->pixmap().toImage();
+   toolType type =  mw->getCurrentSelectedToolType();
+
+   if (isPressEventTool(type)==paintType::path){
+        // draw path/add path items
+       (this->draggedItem) = new ExerciseItem(&point, icon, type, paintType::path, new PointList());
        isDragged = true;
+       isArrowed = false;
        mw->addExerciseItem(draggedItem);
        mw->repaintTimeSlot();
    }
+   if(isPressEventTool(type)==paintType::arrow){
+       // do stuff for arrows here
+       DEBUG(mousPressEvent: arrow type clicked);
+       isDragged = false;
+       isArrowed = true;
+       this->draggedItem = new ExerciseItem(&point, icon, type, paintType::path, new PointList());
+       mw->addExerciseItem(draggedItem);
+      // currentTs = (*(mw->globaldata->timeslots))[mw->currentSelectedTimeslot];
+       mw->repaintTimeSlot();
 
-   else{ // just single item (static in image)
-       // ready; works
-    QImage image = mw->getCurrentSelectedCursor()->pixmap().toImage();
-    toolType t = mw->getCurrentSelectedToolType();
-    ExerciseItem *item = new ExerciseItem(&point, &image, t, false, Q_NULLPTR);
-    mw->addExerciseItem(item);
-    mw->repaintTimeSlot();
+
    }
 
-}
+   if(isPressEventTool(type)==paintType::single){
+       // just single item (static in image)
+       // ready; works
+        ExerciseItem *item = new ExerciseItem(&point, icon, type, paintType::single, Q_NULLPTR);
+        mw->addExerciseItem(item);
+        mw->repaintTimeSlot();
+   }
+
+} // mousePressEvent
 
 void PaintLabel::mouseReleaseEvent(QMouseEvent *event){
     DEBUG(label mouse released);
@@ -162,13 +190,19 @@ void PaintLabel::mouseReleaseEvent(QMouseEvent *event){
     draggedItem = Q_NULLPTR;
     movementPoints = Q_NULLPTR;
     isDragged = false;
+
+
+    if(isArrowed){
+        mw->repaintTimeSlot();
+    }
+    isArrowed = false;
 }
 
 
 void PaintLabel::mouseMoveEvent(QMouseEvent *event){
+    DEBUG(mouseMove);
 
     if(isDragged){
-        //LDEBUG(" mouse moved, x:" << event->pos().x() << " y:"<< event->pos().y());
 
         int x = event->pos().x();
         int y = event->pos().y();
@@ -191,15 +225,27 @@ void PaintLabel::mouseMoveEvent(QMouseEvent *event){
                 OFFSET_POINT_LARGE(point);
             }
 
-
             draggedItem->movementPoints->emplace_back(point);
+            DEBUG(inMoveEvent);
             mw->repaintTimeSlot();
+            DEBUG(inMoveEvent2);
            // DEBUG(here);
         }
 
     }
+    // do arrow intermediate stuff
+     if (isArrowed){
+        // insert step in arrow
+            QPoint point = event->pos();
+
+            delete draggedItem->movementPoints;
+            draggedItem->movementPoints = new PointList();
+            draggedItem->movementPoints->emplace_back(point);
+           // mw->repaintTimeSlot();
+           // DEBUG(here);
 
 
+    } // isArrowed
 }
 
 

@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QLabel>
 #include "exerciseitem.h"
+#include "timeslotdata.h"
+
+
 
 class Ui_ExerciseMainWindow;
 
@@ -23,9 +26,11 @@ private:
     ExerciseItem *draggedItem;
     PointList *movementPoints;
     bool isDragged = false;
+    bool isArrowed = false;
     int dx = 0;
     int dy = 0;
     int counter;
+    TimeslotData* currentTs = Q_NULLPTR;
 
 
 };

@@ -9,5 +9,6 @@
         <file>imageSources/player.png</file>
         <file>imageSources/line.png</file>
         <file>imageSources/pucks.png</file>
+        <file>imageSources/slapshot.png</file>
     </qresource>
 </RCC>

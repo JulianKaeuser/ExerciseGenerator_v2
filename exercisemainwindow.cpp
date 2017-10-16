@@ -49,7 +49,7 @@
  * @param fieldCanvasType
  */
 void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasType){
-    DEBUG(assignSelectedTimeSlotFieldCanvas(int) called);
+    //DEBUG(assignSelectedTimeSlotFieldCanvas(int) called);
     /*
      * fieldCanvasTypes:
      * 0 = full
@@ -106,7 +106,9 @@ void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasTyp
        activeTimeslotGraphicLabel->update();
        activeTimeslotGraphicLabel->show();
 
-       this->repaintTimeSlot();
+       if(repaintFlag){
+        this->repaintTimeSlot();
+       }
 };
 
 /**
@@ -238,7 +240,7 @@ void Ui_ExerciseMainWindow::openAnimationWindow(){
  * @brief Ui_ExerciseMainWindow::closeAnimationWindowOnAction
  */
 void Ui_ExerciseMainWindow::closeAnimationWindowOnAction(){
-    DEBUG(closeAnimationWindowOnAction() called);
+    //DEBUG(closeAnimationWindowOnAction() called);
     if(animationWindow!=Q_NULLPTR){
         animationWindow->close();
         //delete animationWindow;
@@ -328,7 +330,7 @@ void Ui_ExerciseMainWindow::updateCurrentSelectedTimeslot(QListWidgetItem* click
 
 void Ui_ExerciseMainWindow::updateCurrentSelectedTool(QListWidgetItem* clickedItem){
     this->currentSelectedTool = clickedItem;
-    DEBUG(updateCurrentSelectedTool(QListWidgetItem*) called);
+   // DEBUG(updateCurrentSelectedTool(QListWidgetItem*) called);
 
 } // updateCurrentSelectedTool
 
@@ -358,43 +360,44 @@ toolType Ui_ExerciseMainWindow::getCurrentSelectedToolType(){
 
 void Ui_ExerciseMainWindow::repaintTimeSlot(){
   TimeslotData *ts = (*(this->globaldata->timeslots))[currentSelectedTimeslot];
+
+
+  // for each object, paint it on the canvas
   for (auto iter = ts->objects.begin(); iter!=ts->objects.end(); ++iter){
       QImage *image = ts->canvas;
       QPainter painter (image);
       QPoint point = (*iter)->point;
       QPoint *pointMapped = getMappedPoint(&point, image, activeTimeslotGraphicLabel);
-      QImage item = (*iter)->image;
-      if((*iter)->isDragged){ // we'll have to draw an arrow then
+      QImage exerciseItemIcon = *((*iter)->icon);
+
+      if(((*iter)->isDragged)==paintType::path){ // we'll have to draw an path then
           QPoint *prevPoint = new QPoint(*pointMapped);
-            DEBUG(h);
-            LDEBUG("prevPOint" << prevPoint);
+
+          // for puck, special offset
             if((*iter)->type==toolType::puck){
                 OFFSET_POINT_SMALL(*prevPoint);
             }
             else{
                 OFFSET_POINT_LARGE(*prevPoint);
             }
+
+            // step through movement Points;
           for (auto pointIter = (*iter)->movementPoints->begin(); pointIter!=(*iter)->movementPoints->end(); ++pointIter){
-              DEBUG(in loop);
               QPoint stepPoint = *pointIter;
-              DEBUG(stepPoint);
               QPoint *stepPointMapped = getMappedPoint(&stepPoint, image, activeTimeslotGraphicLabel);
-              DEBUG(stepPointMapped);
-              LDEBUG(stepPointMapped);
               QPen pen (*getColorOfArrowByTool((*iter)->type));
-              LDEBUG("Color " << &pen);
               pen.setWidth(3);
               painter.setPen(pen);
 
               painter.drawLine(*prevPoint, *stepPointMapped);
               prevPoint = stepPointMapped;
 
-          }
+          } // movementPoints
 
-      }
-      painter.drawImage(*pointMapped, item);
+      }// isDragged
+      painter.drawImage(*pointMapped, exerciseItemIcon);
       painter.end();
-  }
+  }// iter over all exerciseItems
   this->activeTimeslotGraphicLabel->setPixmap(QPixmap::fromImage(*(TIMESLOTDATA(currentSelectedTimeslot))->canvas));
 
 };
@@ -565,6 +568,10 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         //activeTimeslotGraphicLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
         scaleActiveTimeslotGraphicsViewLabel(0);
 
+
+        // label for arrows of shots etc
+        arrowLabel = new PaintLabel(centralWidget);
+        arrowLabel->mw = this;
 
 
         // LCD to show number of selected step
