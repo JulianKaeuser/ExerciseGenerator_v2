@@ -6,13 +6,14 @@
 #include <QPoint>
 #include <QPainter>
 #include <QPen>
+#include "timeslotdata.h"
 
 #include <iostream>
 #define _LIT(x) # x
 #define DEBUG(x) (std::cout << _LIT(x) << std::endl)
 #define LDEBUG(x) (std::cout << x << std::endl)
 
-#define STEP_WIDTH 6
+#define STEP_WIDTH 2
 
 #define OFFSET_POINT_LARGE(x) ((x += QPoint(20, 0)))
 #define OFFSET_POINT_SMALL(x) ((x += QPoint(5, -5)))
@@ -143,7 +144,7 @@ PaintLabel::PaintLabel(QWidget *parent): QLabel(parent){
 }
 
 void PaintLabel::mousePressEvent(QMouseEvent *event){
-    DEBUG(mousePressVenet:label pressed);
+  //  DEBUG(mousePressVenet:label pressed);
     QPoint point = event->pos();
     if(mw->labelNotClickable){
         return;
@@ -154,7 +155,7 @@ void PaintLabel::mousePressEvent(QMouseEvent *event){
 
    if (isPressEventTool(type)==paintType::path){
         // draw path/add path items
-       (this->draggedItem) = new ExerciseItem(&point, icon, type, paintType::path, new PointList());
+       (this->draggedItem) = new ExerciseItem(point, icon, type, paintType::path, new PointList());
        isDragged = true;
        isArrowed = false;
        mw->addExerciseItem(draggedItem);
@@ -162,10 +163,10 @@ void PaintLabel::mousePressEvent(QMouseEvent *event){
    }
    if(isPressEventTool(type)==paintType::arrow){
        // do stuff for arrows here
-       DEBUG(mousPressEvent: arrow type clicked);
+     //  DEBUG(mousPressEvent: arrow type clicked);
        isDragged = false;
        isArrowed = true;
-       this->draggedItem = new ExerciseItem(&point, icon, type, paintType::path, new PointList());
+       this->draggedItem = new ExerciseItem(point, icon, type, paintType::path, new PointList());
        mw->addExerciseItem(draggedItem);
       // currentTs = (*(mw->globaldata->timeslots))[mw->currentSelectedTimeslot];
        mw->repaintTimeSlot();
@@ -176,7 +177,7 @@ void PaintLabel::mousePressEvent(QMouseEvent *event){
    if(isPressEventTool(type)==paintType::single){
        // just single item (static in image)
        // ready; works
-        ExerciseItem *item = new ExerciseItem(&point, icon, type, paintType::single, Q_NULLPTR);
+        ExerciseItem *item = new ExerciseItem(point, icon, type, paintType::single, Q_NULLPTR);
         mw->addExerciseItem(item);
         mw->repaintTimeSlot();
    }
@@ -184,7 +185,8 @@ void PaintLabel::mousePressEvent(QMouseEvent *event){
 } // mousePressEvent
 
 void PaintLabel::mouseReleaseEvent(QMouseEvent *event){
-    DEBUG(label mouse released);
+    //DEBUG(label mouse released);
+    event->accept();
     dx = 0;
     dy = 0;
     draggedItem = Q_NULLPTR;
@@ -200,7 +202,7 @@ void PaintLabel::mouseReleaseEvent(QMouseEvent *event){
 
 
 void PaintLabel::mouseMoveEvent(QMouseEvent *event){
-    DEBUG(mouseMove);
+    //DEBUG(mouseMove);
 
     if(isDragged){
 
@@ -212,7 +214,7 @@ void PaintLabel::mouseMoveEvent(QMouseEvent *event){
             counter++;
         }
         if(counter==STEP_WIDTH){ // insert step in arrow
-            DEBUG(counter 10);
+          // DEBUG(counter 10);
             counter =0;
             dx = 0;
             dy = 0;
@@ -226,9 +228,9 @@ void PaintLabel::mouseMoveEvent(QMouseEvent *event){
             }
 
             draggedItem->movementPoints->emplace_back(point);
-            DEBUG(inMoveEvent);
+            //DEBUG(inMoveEvent);
             mw->repaintTimeSlot();
-            DEBUG(inMoveEvent2);
+            //DEBUG(inMoveEvent2);
            // DEBUG(here);
         }
 

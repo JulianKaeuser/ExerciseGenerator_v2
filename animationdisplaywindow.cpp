@@ -15,6 +15,11 @@
 #include "ui_exercisemainwindow.h"
 #include "smartpointers.h"
 
+#include <iostream>
+#define _LIT(x) # x
+#define DEBUG(x) (std::cout << _LIT(x) << std::endl)
+#define LDEBUG(x) (std::cout << x << std::endl)
+
 
 // constructor
  AnimationDisplayWindow::AnimationDisplayWindow(int speed, bool loop, QString path){
@@ -23,10 +28,14 @@
     movie = new QMovie(path);
     processLabel = new QLabel(this);
     processLabel->setMovie(movie);
-    processLabel->resize(500, 500);
+    processLabel->resize(650, 550);
+    processLabel->show();
+    if (movie==Q_NULLPTR){
+        DEBUG(MOVIE null);
+    }
 
     movie->start();
-    movie->setSpeed(percentSpeed);
+    movie->setSpeed(100);
 }
 
  // destructor (public)

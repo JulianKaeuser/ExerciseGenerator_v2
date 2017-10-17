@@ -2,7 +2,6 @@
     <qresource prefix="/images"/>
     <qresource prefix="/">
         <file>imageSources/fullField90Canvas.png</file>
-        <file>imageSources/fullFieldCanvas.png</file>
         <file>imageSources/halfFieldCanvas.png</file>
         <file>imageSources/puck.png</file>
         <file>imageSources/thirdFieldCanvas.png</file>
@@ -10,5 +9,6 @@
         <file>imageSources/line.png</file>
         <file>imageSources/pucks.png</file>
         <file>imageSources/slapshot.png</file>
+        <file>imageSources/fullFieldCanvas.png</file>
     </qresource>
 </RCC>

@@ -38,6 +38,11 @@
 #include "toolutilities.h"
 #include "paintlabel.h"
 
+#ifndef __TIMESLOTIMAGEVECTOR_T
+#define __TIMESLOTIMAGEVECTOR_T
+typedef std::vector<QImage*> TimeslotImageVector;
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class Ui_ExerciseMainWindow : public QMainWindow
@@ -141,6 +146,15 @@ private:
 
     //methods
     void scaleActiveTimeslotGraphicsViewLabel(int);
+
+    void storeCurrentProgressInGif();
+
+    void buildTimeSlotsAnimations();
+
+    TimeslotImageVector *builtTs = Q_NULLPTR;
+    std::vector<int> *builtTsDurations = Q_NULLPTR;
+
+
 
 
 

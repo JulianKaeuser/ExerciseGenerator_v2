@@ -19,6 +19,9 @@
 #include <QtWidgets/QWidget>
 #include <QMessageBox>
 #include <QPainter>
+#include <QString>
+
+#include "qgifimage.h"
 
 #include "exercisemainwindow.h"
 
@@ -30,7 +33,7 @@
 //#include "smartpointers.h"
 #include "toolutilities.h"
 
-#define PATH "null"
+#define PATH  ("/home/juliankaeuser/Dokumente/Eishockey/Coding/ExerciseGenerator_v2/imageSources/tempGif.gif")
 
 #define _LIT(x) # x
 #define DEBUG(x) (std::cout << _LIT(x) << std::endl)
@@ -231,6 +234,8 @@ void Ui_ExerciseMainWindow::changeCurrentCursorType(QListWidgetItem* exerciseIte
   open separate Window for animation player
 */
 void Ui_ExerciseMainWindow::openAnimationWindow(){
+    this->buildTimeSlotsAnimations();
+    this->storeCurrentProgressInGif();
     animationWindow = new AnimationDisplayWindow(gifSpeedSlider->value(), animationLoopCheckbox->isChecked(), PATH);
     animationWindow->show();
 };
@@ -340,7 +345,7 @@ void Ui_ExerciseMainWindow::updateCurrentSelectedTool(QListWidgetItem* clickedIt
  */
 void Ui_ExerciseMainWindow::addExerciseItem(ExerciseItem *item){
     (*(this->globaldata->timeslots))[currentSelectedTimeslot]->objects.emplace_back(item);
-    DEBUG(item added);
+    //DEBUG(item added);
 };
 
 /**
@@ -790,7 +795,7 @@ void Ui_ExerciseMainWindow::retranslateUi(Ui_ExerciseMainWindow *ExerciseMainWin
  * @param type
  */
 void Ui_ExerciseMainWindow::scaleActiveTimeslotGraphicsViewLabel(int type){
-    DEBUG(scaleActiveTimeslotGraphicsViewLabel(int) called);
+    //DEBUG(scaleActiveTimeslotGraphicsViewLabel(int) called);
     /*
      * fieldCanvasTypes:
      * 0 = full
@@ -810,6 +815,88 @@ void Ui_ExerciseMainWindow::scaleActiveTimeslotGraphicsViewLabel(int type){
 };
 
 
+/**
+ * @brief Ui_ExerciseMainWindow::buildTimeSlotsAnimations
+ */
+void Ui_ExerciseMainWindow::buildTimeSlotsAnimations(){
+    if (builtTs!=Q_NULLPTR){
+        builtTs->clear(); // potentially dagnerous
+        delete builtTs;
+    }
+    this->builtTs = new TimeslotImageVector();
+    this->builtTsDurations = new std::vector<int>();
+
+    int maxNrTotal = 1;
+    std::list<TimeslotData*> *sortList= new std::list<TimeslotData*>();
+    for (auto iter = globaldata->timeslots->begin(); iter != globaldata->timeslots->end(); ++iter){
+        sortList->emplace_back((*iter).second);
+        int t = (*iter).second->getMaxNumSteps();
+        if(t>maxNrTotal){
+            maxNrTotal = t;
+
+        }
+    }
+    sortList->sort();
 
 
+    for (auto iter = sortList->begin(); iter !=sortList->end(); ++iter){
+        (*iter)->insertBuiltTimesteps(builtTs, builtTsDurations,maxNrTotal*2, gifSpeedSlider->value(), this->animationLoopCheckbox->isChecked(), this->activeTimeslotGraphicLabel);
+    }
+    int a = 3;
+
+}; // buildTimeSlotsAnimations
+
+/**
+ * @brief Ui_ExerciseMainWindow::storeCurrentProgressInGif
+ * @param speed
+ * @param looped
+ */
+void Ui_ExerciseMainWindow::storeCurrentProgressInGif(){
+    QGifImage tempGif (QSize(400, 400));
+
+        QVector<QRgb> ctable;
+        ctable << qRgb(255, 255, 255)
+               << qRgb(0, 0, 0)
+               << qRgb(255, 0, 0)
+               << qRgb(0, 255, 0)
+               << qRgb(0, 0, 255)
+               << qRgb(255, 255, 0)
+               << qRgb(0, 255, 255)
+               << qRgb(255, 0, 255);
+
+        tempGif.setGlobalColorTable(ctable, Qt::black);
+        //tempGif.setDefaultTransparentColor(Qt::black);
+        tempGif.setDefaultDelay(100);
+        //![1]
+        //![2]
+ /*
+        QImage image(100, 100, QImage::Format_RGB32);
+        image.fill(QColor(Qt::black));
+        QPainter p(&image);
+        p.setPen(Qt::red);
+        p.drawText(15, 15, "Qt");
+        p.drawRect(20, 20, 60, 60);
+
+        for (int i=0; i<10; ++i) {
+            tempGif.addFrame(image, QPoint(i*20, i*20));
+        }
+        */
+        //LDEBUG(builtTs->size());
+        for (auto iter = builtTs->begin(); iter !=builtTs->end(); ++iter){
+            //DEBUG(in gif loop);
+            QImage q = **iter;
+            q =  q.scaled(QSize(400, 400), Qt::KeepAspectRatio);
+            tempGif.addFrame(q, (150-gifSpeedSlider->value())/4);
+        }
+        if(this->animationLoopCheckbox->isChecked()){
+            tempGif.setLoopCount(0);
+        }
+        else{
+            tempGif.setLoopCount(1);
+        }
+        // now store it temporarily
+        QString path (PATH);
+        tempGif.save(path);
+
+}; //storeCUrrentProgressInGif
 

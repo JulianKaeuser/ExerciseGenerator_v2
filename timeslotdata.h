@@ -9,6 +9,9 @@
 #include <vector>
 #include "exerciseitem.h"
 //#include "smartpointers.h"
+#include "paintlabel.h"
+
+class TimeslotData;
 
 
 /*
@@ -21,6 +24,11 @@
  */
 
 typedef std::vector<ExerciseItem*> ExerciseItemVector;
+
+#ifndef __TIMESLOTIMAGEVECTOR_T
+#define __TIMESLOTIMAGEVECTOR_T
+typedef std::vector<QImage*> TimeslotImageVector;
+#endif
  enum canvasType {
     full = 0,
     full90 = 1,
@@ -49,6 +57,14 @@ typedef std::vector<ExerciseItem*> ExerciseItemVector;
      bool operator>=(const TimeslotData&);
      bool operator<=(const TimeslotData&);
      bool operator!=(const TimeslotData&);
+
+     int getMaxNumSteps();
+     void insertBuiltTimesteps(TimeslotImageVector*, std::vector<int>*,int, int, bool, PaintLabel*);
+   //  (builtTs, builtTsDurations, gifSpeedSlider->value(), this->animationLoopCheckbox->isChecked());
+
+     void computeInterpolation(int);
+     QImage* paintRawTimeSlot(const TimeslotData& ,int, PaintLabel*);
+
  private:
 
 

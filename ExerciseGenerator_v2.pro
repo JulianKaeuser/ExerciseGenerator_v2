@@ -39,10 +39,15 @@ HEADERS += \
     globaldata.h \
     toolutilities.h \
     exerciseitem.h \
-    paintlabel.h
+    paintlabel.h \
+    qtgifimage/src/gifimage/qgifglobal.h \
+    qtgifimage/src/gifimage/qgifimage.h \
+    qtgifimage/src/gifimage/qgifimage_p.h
 
 FORMS += \
         exercisemainwindow.ui
 
 RESOURCES += \
     exercisegenerator_v2_resources.qrc
+
+include(/home/juliankaeuser/build-ExerciseGenerator-Desktop-Debug/qtgifimage/src/gifimage/qtgifimage.pri)

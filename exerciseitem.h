@@ -19,7 +19,7 @@ typedef std::unique_ptr<QImage> QImagePointer;
 class ExerciseItem
 {
 public:
-    ExerciseItem(QPoint*,const QImage&, toolType, paintType, PointList*);
+    ExerciseItem(QPoint,const QImage&, toolType, paintType, PointList*);
     ExerciseItem(const ExerciseItem&);
     ~ExerciseItem();
     QPoint point;

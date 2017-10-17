@@ -4,9 +4,10 @@
 #include <QObject>
 #include <QLabel>
 #include "exerciseitem.h"
-#include "timeslotdata.h"
 
 
+// forward declaration
+class TimeslotData;
 
 class Ui_ExerciseMainWindow;
 

@@ -26,8 +26,8 @@ private:
  * @param type
  * @param color
  */
-ExerciseItem::ExerciseItem(QPoint *point, const QImage& icon, toolType type, paintType isDragged, PointList *list):
-    point(*point),
+ExerciseItem::ExerciseItem(QPoint point, const QImage& icon, toolType type, paintType isDragged, PointList *list):
+    point(point),
     icon(std::make_unique<QImage>(icon)),
     type(type),
     isDragged(isDragged),
