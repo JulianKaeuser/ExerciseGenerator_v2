@@ -177,7 +177,15 @@ void Ui_ExerciseMainWindow::changeSelectedToolColor(int colorIndex){
  * @param exerciseItem
  */
 void Ui_ExerciseMainWindow::changeCurrentToolType(QListWidgetItem* exerciseItem){
-
+    DEBUG(changeCurrentToolType() called);
+    Tool* oldTool = this->currentTool;
+    Tool* newTool = new Tool(static_cast<toolType>(toolsListWidget->row(exerciseItem)), getColorFromBox(toolColorSelectComboBox), 0);
+    this->currentTool = newTool;
+    this->mw->setCursor( *(currentTool->getCursor()));
+    //if(oldTool!=Q_NULLPTR){
+    //    delete(oldTool);
+    //}
+    DEBUG(changeCurrentToolType() finished);
 };//changeCurrentToolType
 
 /**
@@ -282,6 +290,10 @@ void Ui_ExerciseMainWindow::updateCurrentSelectedTimeslotItem(QListWidgetItem* c
 
 } // updatecurrentSelectedTimeslotItem
 
+/**
+ * @brief Ui_ExerciseMainWindow::updateCurrentSelectedToolItem
+ * @param clickedItem
+ */
 void Ui_ExerciseMainWindow::updateCurrentSelectedToolItem(QListWidgetItem* clickedItem){
     this->currentSelectedToolItem = clickedItem;
 
@@ -571,11 +583,11 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
 
         // clicks in timeslotListWidget
         QObject::connect(timeslotsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateLCDNumber(QListWidgetItem*)));
-        QObject::connect(timeslotsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updatecurrentSelectedTimeslotItem(QListWidgetItem*)));
+        QObject::connect(timeslotsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateCurrentSelectedTimeslotItem(QListWidgetItem*)));
 
         // clicks on toolsListWidget
         QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateCurrentSelectedToolItem(QListWidgetItem*)));
-        QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(changeCurrentCursorType(QListWidgetItem*)));
+        QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(changeCurrentToolType(QListWidgetItem*)));
 
         QMetaObject::connectSlotsByName(ExerciseMainWindow);
     } // setupUi

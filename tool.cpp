@@ -8,6 +8,11 @@
 #define DEBUG(x) (std::cout << _LIT(x) << std::endl)
 #define LDEBUG(x) (std::cout << x << std::endl)
 
+/**
+ * @brief getColorFromBox
+ * @param box
+ * @return
+ */
 QColor getColorFromBox(QComboBox* box){
     QColor qc = Qt::black;
 
@@ -107,9 +112,10 @@ Tool::~Tool(){
  * @param type
  */
 void Tool::setType(toolType type){
+
     this->type = type;
-    delete(baseImage);
-    delete(cursor);
+    //delete(baseImage);
+    //delete(cursor);
 /*enum toolType{
 
     player = 0,
@@ -266,7 +272,8 @@ void Tool::setType(toolType type){
  */
 void Tool::setColor(QColor color){
     this->color = color;
-    this->setType(this->type);
+    toolType t = this->type;
+    this->setType(t);
 } // setColor
 
 /**
