@@ -60,12 +60,13 @@ private:
  * @param canvas
  * @param ct
  */
-TimeslotData::TimeslotData(int number, int listIndex, QListWidgetItem* item, QImage *image, QImage *canvas, canvasType ct):
+TimeslotData::TimeslotData(int number, int listIndex, QListWidgetItem* item, QImage *image, QImage *canvas, canvasType ct, QGraphicsScene* scene):
     number(number),
     listIndex(listIndex),
     item(item),
     image(image),
     canvas(canvas),
+    scene(scene),
     ct(ct)
 {
     ExerciseItemVector *ex = new ExerciseItemVector();
@@ -90,6 +91,7 @@ TimeslotData::TimeslotData(const TimeslotData &other){
     this->ct = other.ct;
     this->item = other.item;
     this->objects = other.objects;
+    this->scene = other.scene;
 }
 
 /**
@@ -104,6 +106,7 @@ bool TimeslotData::operator !=(const TimeslotData &other){
     if(this->listIndex != other.listIndex) return false;
     if(this->image != other.image) return false;
     if(this->number != other.number) return false;
+    if(this->scene != other.scene) return false;
     return true;
 }
 

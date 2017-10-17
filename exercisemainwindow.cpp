@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QString>
+#include <QGraphicsItem>
 
 #include "qgifimage.h"
 
@@ -107,7 +108,7 @@ void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasTyp
        activeTimeslotGraphicLabel->setScaledContents(true);
        activeTimeslotGraphicLabel->repaint();
        activeTimeslotGraphicLabel->update();
-       activeTimeslotGraphicLabel->show();
+       //activeTimeslotGraphicLabel->show();
 
        if(repaintFlag){
         this->repaintTimeSlot();
@@ -554,6 +555,17 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         animationLoopCheckbox->setObjectName(QStringLiteral("animationLoopCheckbox"));
         animationLoopCheckbox->setGeometry(QRect(1000, 560, 91, 26));
 
+
+        graphicScene = new QGraphicsScene(centralWidget);
+        graphicScene->setObjectName(QStringLiteral("graphicsScene"));
+        graphicScene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(QImage(":imageSources/fullFieldCanvas.png").scaled(QSize(660, 470), Qt::KeepAspectRatio))));
+
+        // graphics View
+        graphicsView = new QGraphicsView(centralWidget);
+        graphicsView->setGeometry(QRect(140,90,670,480));
+        graphicsView->setObjectName(QStringLiteral("graphicsView"));
+        graphicsView->setScene(graphicScene);
+
         /*
          * Label to view current image
          */
@@ -572,6 +584,7 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         activeTimeslotGraphicLabel->setScaledContents(true);
         //activeTimeslotGraphicLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
         scaleActiveTimeslotGraphicsViewLabel(0);
+        activeTimeslotGraphicLabel->hide();
 
 
         // label for arrows of shots etc
@@ -635,7 +648,7 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         DEBUG(here);
         (*(globaldata->timeslots))[(timeslotsListWidget->item(0))] = (new TimeslotData(1, 0, (timeslotsListWidget->item(0)),(new QImage()), canvas, ct));
         activeTimeslotGraphicLabel->setPixmap(QPixmap::fromImage(*((*(globaldata->timeslots))[(timeslotsListWidget->item(0))]->canvas)));
-        activeTimeslotGraphicLabel->show();
+        //activeTimeslotGraphicLabel->show();
 
         QCursor qc = this->cursor();
         currentSelectedCursor = &qc;

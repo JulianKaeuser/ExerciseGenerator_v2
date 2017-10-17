@@ -30,6 +30,8 @@
 #include <QtWidgets/QWidget>
 #include <QCursor>
 #include <QMouseEvent>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 #include "animationdisplaywindow.h"
 #include "timeslotdata.h"
@@ -99,6 +101,8 @@ public:
     QMenu *menuInfo;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
+    QGraphicsView *graphicsView;
+    QGraphicsScene *graphicScene;
 
     PaintLabel *arrowLabel = Q_NULLPTR;
     void addExerciseItem(ExerciseItem*);
