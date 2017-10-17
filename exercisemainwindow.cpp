@@ -32,7 +32,6 @@
 #include <memory>
 #include <list>
 //#include "smartpointers.h"
-#include "toolutilities.h"
 
 #define PATH  ("/home/juliankaeuser/Dokumente/Eishockey/Coding/ExerciseGenerator_v2/imageSources/tempGif.gif")
 
@@ -44,6 +43,8 @@
 
 #define OFFSET_POINT_LARGE(x) ((x += QPoint(20, 0)))
 #define OFFSET_POINT_SMALL(x) ((x += QPoint(5, 0)))
+
+
 
 
 
@@ -64,7 +65,7 @@ void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasTyp
      * 1000 = unused;
      */
 
-    TimeslotData *ts = (*(globaldata->timeslots))[currentSelectedTimeslot];
+    TimeslotData *ts = (*(globaldata->timeslots))[currentSelectedTimeslotItem];
     canvasType type = static_cast<canvasType>(fieldCanvasType);
 
     QImage *im =  ( new QImage(":/imageSources/fullFieldCanvas.png"));
@@ -93,26 +94,8 @@ void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasTyp
             default:
                 return;
             }
-
-       if(type !=ts->ct){
-            ts->canvas = im;
-            ts->objects.clear();
-       }
        ts->ct = type;
 
-
-       this->activeTimeslotGraphicLabel->setPixmap(QPixmap::fromImage(*(TIMESLOTDATA(currentSelectedTimeslot))->canvas));
-       //activeTimeslotGraphicLabel->setGeometry(QRect());
-       //        activeTimeslotGraphicLabel->setGeometry(QRect(140, 90, 661, 471));
-       this->scaleActiveTimeslotGraphicsViewLabel(static_cast<int>(type));
-       activeTimeslotGraphicLabel->setScaledContents(true);
-       activeTimeslotGraphicLabel->repaint();
-       activeTimeslotGraphicLabel->update();
-       //activeTimeslotGraphicLabel->show();
-
-       if(repaintFlag){
-        this->repaintTimeSlot();
-       }
 };
 
 /**
@@ -129,13 +112,12 @@ void Ui_ExerciseMainWindow::addTimeSlot(){
 
 
     QListWidgetItem *newTs = new QListWidgetItem(timeslotsListWidget);
-    (*(globaldata->timeslots))[(newTs)] = (new TimeslotData(newIndex,  timeslotsListWidget->row(newTs), (newTs), Q_NULLPTR, (im), canvasType::full90));
+    (*(globaldata->timeslots))[(newTs)] = (new TimeslotData(newIndex,  timeslotsListWidget->row(newTs), (newTs), Q_NULLPTR, (im), canvasType::full90, new QGraphicsScene(centralWidget)));
 
-    QListWidgetItem *prevTs = currentSelectedTimeslot;
-    currentSelectedTimeslot = newTs;
+    QListWidgetItem *prevTs = currentSelectedTimeslotItem;
+    currentSelectedTimeslotItem = newTs;
     assignSelectedTimeslotFieldCanvas(0);
-    //currentSelectedTimeslot = prevTs;
-    this->scaleActiveTimeslotGraphicsViewLabel(0);
+
     timeslotsListWidget->setCurrentItem(newTs);
 
 
@@ -162,74 +144,41 @@ void Ui_ExerciseMainWindow::confirmDeletion(){
         deleteSelectedTimeslot();
     }
 
-};
+};//confirmDeletion
 
 /**
  * @brief Ui_ExerciseMainWindow::rotateCurrentToolLeft
  */
 void Ui_ExerciseMainWindow::rotateCurrentToolLeft(){
-    DEBUG(rotateCurrentToolLeft() called);
-    if (currentNumRotationsLeft+currentNumRotationsRight==6){
-        currentNumRotationsLeft = 0;
-        currentNumRotationsRight = 0;
-    }
-    if(currentNumRotationsLeft>3){
-        return;
-    }
-    currentNumRotationsLeft++;
-    currentSelectedCursor = turnCursor(*getSelectedCursor(currentToolType, *getSelectedColor(toolColorSelectComboBox)), currentNumRotationsLeft*45, Q_NULLPTR);
-
-    mw->setCursor(*currentSelectedCursor);
-
-};
+    currentTool->rotate(-45);
+    mw->setCursor(*(currentTool->getCursor()));
+}; //rotateCurrentToolLeft
 
 /**
  * @brief Ui_ExerciseMainWindow::rotateCurrentToolRight
  */
 void Ui_ExerciseMainWindow::rotateCurrentToolRight(){
-    DEBUG(rotateCurrentToolRight() called);
-    if (currentNumRotationsLeft+currentNumRotationsRight==6){
-        currentNumRotationsLeft = 0;
-        currentNumRotationsRight = 0;
-    }
-    if(currentNumRotationsRight>3){
-        return;
-    }
-    currentNumRotationsRight++;
-      currentSelectedCursor = turnCursor(*getSelectedCursor(currentToolType, *getSelectedColor(toolColorSelectComboBox)), currentNumRotationsRight*(315), Q_NULLPTR);
+    currentTool->rotate(45);
+    mw->setCursor(*(currentTool->getCursor()));
+}; //rotateCurrentToolRight
 
-    this->setCursor(*currentSelectedCursor);
-
-
-};
-
-// changes the color of the current selected tool
+/**
+ * @brief Ui_ExerciseMainWindow::changeSelectedToolColor
+ * @param colorIndex
+ */
 void Ui_ExerciseMainWindow::changeSelectedToolColor(int colorIndex){
-    DEBUG(changeSelectedToolColor(int) called);
+    QColor color = getColorFromBox(toolColorSelectComboBox);
+    currentTool->setColor(color);
+    this->mw->setCursor(*(currentTool->getCursor()));
+};//changeSelesctedToolColor
 
-    QCursor *newCursor = getSelectedCursor(currentToolType, *(getSelectedColor(toolColorSelectComboBox)));
-    this->setCursor(*newCursor);
-    this->currentSelectedCursor = newCursor;
-    currentNumRotationsLeft = 0;
-    currentNumRotationsRight = 0;
-};
+/**
+ * @brief Ui_ExerciseMainWindow::changeCurrentToolType
+ * @param exerciseItem
+ */
+void Ui_ExerciseMainWindow::changeCurrentToolType(QListWidgetItem* exerciseItem){
 
-// change current used cursor according to tools
-void Ui_ExerciseMainWindow::changeCurrentCursorType(QListWidgetItem* exerciseItem){
-    DEBUG(changeCurrentCursorType(QListWigetItem* ) called);
-
-    int clickedIndex = toolsListWidget->row(exerciseItem);
-    toolType type = static_cast<toolType> (clickedIndex);
-    this->currentToolType = type;
-    QCursor *newCursor = getSelectedCursor(type, *(getSelectedColor(toolColorSelectComboBox)));
-
-
-    this->setCursor(*newCursor);
-    this->currentSelectedCursor = newCursor;
-    currentNumRotationsLeft = 0;
-    currentNumRotationsRight = 0;
-    labelNotClickable = false;
-};
+};//changeCurrentToolType
 
 /**
   open separate Window for animation player
@@ -274,7 +223,7 @@ void Ui_ExerciseMainWindow::deleteSelectedTimeslot(){
     // do not delete if nothing left then
     if (timeslotsListWidget->count()<2){
         DEBUG(less than 2 slots);
-       TimeslotData* ts =  (*( globaldata->timeslots))[currentSelectedTimeslot];
+       TimeslotData* ts =  (*( globaldata->timeslots))[currentSelectedTimeslotItem];
        ts->objects.clear();
        canvasType ct = ts->ct;
                ts->ct = canvasType::unused;
@@ -283,18 +232,18 @@ void Ui_ExerciseMainWindow::deleteSelectedTimeslot(){
         repaintTimeSlot();
         return;
     }
-    if(currentSelectedTimeslot==Q_NULLPTR){
-        DEBUG(nullpointer for currentSelectedTimeslot);
+    if(currentSelectedTimeslotItem==Q_NULLPTR){
+        DEBUG(nullpointer for currentSelectedTimeslotItem);
         return;
     }
 
     // delete the one to delete
 
-    QListWidgetItem *toDelete = (currentSelectedTimeslot);
+    QListWidgetItem *toDelete = (currentSelectedTimeslotItem);
 
     int newIndex = timeslotsListWidget->currentRow()-1;
     if (newIndex <0) newIndex = 0;
-   // currentSelectedTimeslot = timeslotsListWidget->itemAt(0, newIndex);
+   // currentSelectedTimeslotItem = timeslotsListWidget->itemAt(0, newIndex);
     this->globaldata->timeslots->erase(toDelete);
     timeslotsListWidget->takeItem(timeslotsListWidget->row(toDelete));
    // timeslotsListWidget->takeItem(timeslotsListWidget->currentRow());
@@ -312,31 +261,29 @@ void Ui_ExerciseMainWindow::deleteSelectedTimeslot(){
         (*iter).number = ii;
         ii++;
     }
-    updateCurrentSelectedTimeslot(timeslotsListWidget->item(newIndex));
+    updateCurrentSelectedTimeslotItem(timeslotsListWidget->item(newIndex));
 }; // deleteSelectedTimeSlot
 
 
 /**
- * @brief Ui_ExerciseMainWindow::updateCurrentSelectedTimeslot
+ * @brief Ui_ExerciseMainWindow::updatecurrentSelectedTimeslotItem
  * @param clickedItem
  */
-void Ui_ExerciseMainWindow::updateCurrentSelectedTimeslot(QListWidgetItem* clickedItem){
-    DEBUG(updateCurrentSelectedTimeslot(QListWidgetItem* ) called);
-    this->currentSelectedTimeslot = clickedItem;
+void Ui_ExerciseMainWindow::updateCurrentSelectedTimeslotItem(QListWidgetItem* clickedItem){
+    DEBUG(updatecurrentSelectedTimeslotItem(QListWidgetItem* ) called);
+    this->currentSelectedTimeslotItem = clickedItem;
     int comboBoxIndex = 0;
     if((*(globaldata->timeslots))[(clickedItem)] !=nullptr){
         comboBoxIndex = static_cast<int>((*(globaldata->timeslots))[(clickedItem)]->ct);
     }
 
     this->timeslotFieldCanvasSelectComboBox->setCurrentIndex(comboBoxIndex);
-    this->activeTimeslotGraphicLabel->setPixmap(QPixmap::fromImage(*(TIMESLOTDATA(clickedItem))->canvas));
-    this->repaintTimeSlot();
 
-} // updateCurrentSelectedTimeSlot
 
-void Ui_ExerciseMainWindow::updateCurrentSelectedTool(QListWidgetItem* clickedItem){
-    this->currentSelectedTool = clickedItem;
-   // DEBUG(updateCurrentSelectedTool(QListWidgetItem*) called);
+} // updatecurrentSelectedTimeslotItem
+
+void Ui_ExerciseMainWindow::updateCurrentSelectedToolItem(QListWidgetItem* clickedItem){
+    this->currentSelectedToolItem = clickedItem;
 
 } // updateCurrentSelectedTool
 
@@ -345,7 +292,7 @@ void Ui_ExerciseMainWindow::updateCurrentSelectedTool(QListWidgetItem* clickedIt
  * @param item
  */
 void Ui_ExerciseMainWindow::addExerciseItem(ExerciseItem *item){
-    (*(this->globaldata->timeslots))[currentSelectedTimeslot]->objects.emplace_back(item);
+    (*(this->globaldata->timeslots))[currentSelectedTimeslotItem]->objects.emplace_back(item);
     //DEBUG(item added);
 };
 
@@ -353,60 +300,22 @@ void Ui_ExerciseMainWindow::addExerciseItem(ExerciseItem *item){
  * @brief Ui_ExerciseMainWindow::getCurrentSelectedCursor
  */
 QCursor* Ui_ExerciseMainWindow::getCurrentSelectedCursor(){
-    return currentSelectedCursor;
+    return currentTool->getCursor();
 };
 
 /**
  * @brief Ui_ExerciseMainWindow::getCurrentSelectedToolType
  * @return
  */
-toolType Ui_ExerciseMainWindow::getCurrentSelectedToolType(){
-    return currentToolType;
+Tool* Ui_ExerciseMainWindow::getCurrentSelectedToolType(){
+    return currentTool;
 };
 
 void Ui_ExerciseMainWindow::repaintTimeSlot(){
-  TimeslotData *ts = (*(this->globaldata->timeslots))[currentSelectedTimeslot];
+  TimeslotData *ts = (*(this->globaldata->timeslots))[currentSelectedTimeslotItem];
 
 
-  // for each object, paint it on the canvas
-  for (auto iter = ts->objects.begin(); iter!=ts->objects.end(); ++iter){
-      QImage *image = ts->canvas;
-      QPainter painter (image);
-      QPoint point = (*iter)->point;
-      QPoint *pointMapped = getMappedPoint(&point, image, activeTimeslotGraphicLabel);
-      QImage exerciseItemIcon = *((*iter)->icon);
-
-      if(((*iter)->isDragged)==paintType::path){ // we'll have to draw an path then
-          QPoint *prevPoint = new QPoint(*pointMapped);
-
-          // for puck, special offset
-            if((*iter)->type==toolType::puck){
-                OFFSET_POINT_SMALL(*prevPoint);
-            }
-            else{
-                OFFSET_POINT_LARGE(*prevPoint);
-            }
-
-            // step through movement Points;
-          for (auto pointIter = (*iter)->movementPoints->begin(); pointIter!=(*iter)->movementPoints->end(); ++pointIter){
-              QPoint stepPoint = *pointIter;
-              QPoint *stepPointMapped = getMappedPoint(&stepPoint, image, activeTimeslotGraphicLabel);
-              QPen pen (*getColorOfArrowByTool((*iter)->type));
-              pen.setWidth(3);
-              painter.setPen(pen);
-
-              painter.drawLine(*prevPoint, *stepPointMapped);
-              prevPoint = stepPointMapped;
-
-          } // movementPoints
-
-      }// isDragged
-      painter.drawImage(*pointMapped, exerciseItemIcon);
-      painter.end();
-  }// iter over all exerciseItems
-  this->activeTimeslotGraphicLabel->setPixmap(QPixmap::fromImage(*(TIMESLOTDATA(currentSelectedTimeslot))->canvas));
-
-};
+}; // repaintTimeSlot()
 
 void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, int a)
     {
@@ -467,12 +376,6 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         new QListWidgetItem(toolsListWidget);
         new QListWidgetItem(toolsListWidget);
         new QListWidgetItem(toolsListWidget);
-        new QListWidgetItem(toolsListWidget);
-        new QListWidgetItem(toolsListWidget);
-        new QListWidgetItem(toolsListWidget);
-        new QListWidgetItem(toolsListWidget);
-        new QListWidgetItem(toolsListWidget);
-        new QListWidgetItem(toolsListWidget);
         toolsListWidget->setObjectName(QStringLiteral("toolsListWidget"));
         toolsListWidget->setGeometry(QRect(990, 50, 140, 210));
         toolsListWidgetDescriptorLabel = new QLabel(centralWidget);
@@ -497,8 +400,6 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         toolRotateLeftPushButton->setObjectName(QStringLiteral("toolRotateLeftPushButton"));
         toolRotateLeftPushButton->setGeometry(QRect(1135, 205, 60, 30));
 
-        currentNumRotationsLeft = 0;
-        currentNumRotationsRight = 0;
 
         // separator line for tool area
         line = new QFrame(centralWidget);
@@ -556,6 +457,9 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         animationLoopCheckbox->setGeometry(QRect(1000, 560, 91, 26));
 
 
+        /*
+         * Graphics Scene (usually current)
+         */
         graphicScene = new QGraphicsScene(centralWidget);
         graphicScene->setObjectName(QStringLiteral("graphicsScene"));
         graphicScene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(QImage(":imageSources/fullFieldCanvas.png").scaled(QSize(660, 470), Qt::KeepAspectRatio))));
@@ -565,31 +469,6 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         graphicsView->setGeometry(QRect(140,90,670,480));
         graphicsView->setObjectName(QStringLiteral("graphicsView"));
         graphicsView->setScene(graphicScene);
-
-        /*
-         * Label to view current image
-         */
-
-        activeTimeslotGraphicLabel = new PaintLabel(centralWidget);
-        activeTimeslotGraphicLabel->mw = this;
-        activeTimeslotGraphicLabel->setObjectName(QStringLiteral("activeTimeslotGraphicLabel"));
-        activeTimeslotGraphicLabel->setGeometry(QRect(140, 90, 661, 471));
-
-        activeTimeslotGraphicLabel->setMouseTracking(false);
-        activeTimeslotGraphicLabel->setAutoFillBackground(false);
-        activeTimeslotGraphicLabel->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
-"border-top-color: rgb(204, 0, 0);\n"
-"border-color: rgb(204, 0, 0);\n"
-"border-color: rgb(239, 41, 41);"));
-        activeTimeslotGraphicLabel->setScaledContents(true);
-        //activeTimeslotGraphicLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-        scaleActiveTimeslotGraphicsViewLabel(0);
-        activeTimeslotGraphicLabel->hide();
-
-
-        // label for arrows of shots etc
-        arrowLabel = new PaintLabel(centralWidget);
-        arrowLabel->mw = this;
 
 
         // LCD to show number of selected step
@@ -640,19 +519,11 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         timeslotsListWidget->setCurrentRow(0);
         updateLCDNumber(timeslotsListWidget->item(0));
 
-        this->currentSelectedTimeslot = timeslotsListWidget->item(0);
+        // current selected Time slot
+        this->currentSelectedTimeslotItem = timeslotsListWidget->item(0);
 
-        QImage *canvas =(new QImage (":/imageSources/fullFieldCanvas.png"));
-        canvasType ct = canvasType::full;
 
-        DEBUG(here);
-        (*(globaldata->timeslots))[(timeslotsListWidget->item(0))] = (new TimeslotData(1, 0, (timeslotsListWidget->item(0)),(new QImage()), canvas, ct));
-        activeTimeslotGraphicLabel->setPixmap(QPixmap::fromImage(*((*(globaldata->timeslots))[(timeslotsListWidget->item(0))]->canvas)));
-        //activeTimeslotGraphicLabel->show();
 
-        QCursor qc = this->cursor();
-        currentSelectedCursor = &qc;
-        labelNotClickable = true;
         //this->setMouseTracking(true);
         mw->setMouseTracking(true);
         /*
@@ -678,7 +549,7 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
 
 
         QObject::connect(toolColorSelectComboBox, SIGNAL(currentIndexChanged(int)), ExerciseMainWindow, SLOT(changeSelectedToolColor(int)));
-        QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(changeCurrentCursorType(QListWidgetItem*)));
+
 
         // open animation window
         QObject::connect(animationShowPushButton, SIGNAL(clicked()), ExerciseMainWindow, SLOT(openAnimationWindow()));
@@ -700,10 +571,11 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
 
         // clicks in timeslotListWidget
         QObject::connect(timeslotsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateLCDNumber(QListWidgetItem*)));
-        QObject::connect(timeslotsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateCurrentSelectedTimeslot(QListWidgetItem*)));
+        QObject::connect(timeslotsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updatecurrentSelectedTimeslotItem(QListWidgetItem*)));
 
         // clicks on toolsListWidget
-        QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateCurrentSelectedTool(QListWidgetItem*)));
+        QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateCurrentSelectedToolItem(QListWidgetItem*)));
+        QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(changeCurrentCursorType(QListWidgetItem*)));
 
         QMetaObject::connectSlotsByName(ExerciseMainWindow);
     } // setupUi
@@ -719,46 +591,58 @@ void Ui_ExerciseMainWindow::retranslateUi(Ui_ExerciseMainWindow *ExerciseMainWin
         actionSpeichern_unter->setText(QApplication::translate("ExerciseMainWindow", "Speichern unter", Q_NULLPTR));
         actionBeenden->setText(QApplication::translate("ExerciseMainWindow", "Beenden", Q_NULLPTR));
 
+
+        /*
+         * tool list
+         */
         const bool __sortingEnabled = toolsListWidget->isSortingEnabled();
         toolsListWidget->setSortingEnabled(false);
         QListWidgetItem *___qlistwidgetitem = toolsListWidget->item(0);
         ___qlistwidgetitem->setText(QApplication::translate("ExerciseMainWindow", "Spieler", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem1 = toolsListWidget->item(1);
         ___qlistwidgetitem1->setText(QApplication::translate("ExerciseMainWindow", "St\303\274rmer", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem2 = toolsListWidget->item(2);
-        ___qlistwidgetitem2->setText(QApplication::translate("ExerciseMainWindow", "Verteidiger", Q_NULLPTR));
+        ___qlistwidgetitem2->setText(QApplication::translate("ExerciseMainWindow", "St\303\274rmer+Puck", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem3 = toolsListWidget->item(3);
-        ___qlistwidgetitem3->setText(QApplication::translate("ExerciseMainWindow", "Gruppe", Q_NULLPTR));
+        ___qlistwidgetitem3->setText(QApplication::translate("ExerciseMainWindow", "Verteidiger", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem4 = toolsListWidget->item(4);
-        ___qlistwidgetitem4->setText(QApplication::translate("ExerciseMainWindow", "St\303\274rmergruppe", Q_NULLPTR));
+        ___qlistwidgetitem4->setText(QApplication::translate("ExerciseMainWindow", "Verteidiger+Puck", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem5 = toolsListWidget->item(5);
-        ___qlistwidgetitem5->setText(QApplication::translate("ExerciseMainWindow", "Verteidigergruppe", Q_NULLPTR));
+        ___qlistwidgetitem5->setText(QApplication::translate("ExerciseMainWindow", "Puck", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem6 = toolsListWidget->item(6);
-        ___qlistwidgetitem6->setText(QApplication::translate("ExerciseMainWindow", "Puck", Q_NULLPTR));
+        ___qlistwidgetitem6->setText(QApplication::translate("ExerciseMainWindow", "Pucks", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem7 = toolsListWidget->item(7);
-        ___qlistwidgetitem7->setText(QApplication::translate("ExerciseMainWindow", "Pucks", Q_NULLPTR));
+        ___qlistwidgetitem7->setText(QApplication::translate("ExerciseMainWindow", "Pass", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem8 = toolsListWidget->item(8);
-        ___qlistwidgetitem8->setText(QApplication::translate("ExerciseMainWindow", "Pass", Q_NULLPTR));
+        ___qlistwidgetitem8->setText(QApplication::translate("ExerciseMainWindow", "Schlagschuss", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem9 = toolsListWidget->item(9);
-        ___qlistwidgetitem9->setText(QApplication::translate("ExerciseMainWindow", "Laufweg", Q_NULLPTR));
+        ___qlistwidgetitem9->setText(QApplication::translate("ExerciseMainWindow", "Schlenzer", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem10 = toolsListWidget->item(10);
-        ___qlistwidgetitem10->setText(QApplication::translate("ExerciseMainWindow", "Laufweg mit Puck", Q_NULLPTR));
+        ___qlistwidgetitem10->setText(QApplication::translate("ExerciseMainWindow", "Schlange", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem11 = toolsListWidget->item(11);
-        ___qlistwidgetitem11->setText(QApplication::translate("ExerciseMainWindow", "Stickhandling", Q_NULLPTR));
+        ___qlistwidgetitem11->setText(QApplication::translate("ExerciseMainWindow", "Schlange Stürmer", Q_NULLPTR));
+
         QListWidgetItem *___qlistwidgetitem12 = toolsListWidget->item(12);
-        ___qlistwidgetitem12->setText(QApplication::translate("ExerciseMainWindow", "Schlagschuss", Q_NULLPTR));
-        QListWidgetItem *___qlistwidgetitem13 = toolsListWidget->item(13);
-        ___qlistwidgetitem13->setText(QApplication::translate("ExerciseMainWindow", "Schlenzer", Q_NULLPTR));
-        QListWidgetItem *___qlistwidgetitem14 = toolsListWidget->item(14);
-        ___qlistwidgetitem14->setText(QApplication::translate("ExerciseMainWindow", "R\303\274ckw\303\244rts", Q_NULLPTR));
-        QListWidgetItem *___qlistwidgetitem15 = toolsListWidget->item(15);
-        ___qlistwidgetitem15->setText(QApplication::translate("ExerciseMainWindow", "Umdrehen", Q_NULLPTR));
-        QListWidgetItem *___qlistwidgetitem16 = toolsListWidget->item(16);
-        ___qlistwidgetitem16->setText(QApplication::translate("ExerciseMainWindow", "Schlange", Q_NULLPTR));
-        QListWidgetItem *___qlistwidgetitem17 = toolsListWidget->item(17);
-        ___qlistwidgetitem17->setText(QApplication::translate("ExerciseMainWindow", "Schlange Stürmer", Q_NULLPTR));
-        QListWidgetItem *___qlistwidgetitem18 = toolsListWidget->item(18);
-        ___qlistwidgetitem18->setText(QApplication::translate("ExerciseMainWindow", "Schlange Verteidiger", Q_NULLPTR));
+        ___qlistwidgetitem12->setText(QApplication::translate("ExerciseMainWindow", "Schlange Verteidiger", Q_NULLPTR));
+
+
+
+
+
+
+
+
         toolsListWidget->setSortingEnabled(__sortingEnabled);
 
         toolsListWidgetDescriptorLabel->setText(QApplication::translate("ExerciseMainWindow", "Werkzeuge", Q_NULLPTR));
@@ -791,7 +675,7 @@ void Ui_ExerciseMainWindow::retranslateUi(Ui_ExerciseMainWindow *ExerciseMainWin
         );
         animationShowPushButton->setText(QApplication::translate("ExerciseMainWindow", "Animation abspielen", Q_NULLPTR));
         animationLoopCheckbox->setText(QApplication::translate("ExerciseMainWindow", "Schleife", Q_NULLPTR));
-        activeTimeslotGraphicLabel->setText(QString());
+
         menuDatei->setTitle(QApplication::translate("ExerciseMainWindow", "Datei", Q_NULLPTR));
         menuBearbeiten->setTitle(QApplication::translate("ExerciseMainWindow", "Bearbeiten", Q_NULLPTR));
         menuInfo->setTitle(QApplication::translate("ExerciseMainWindow", "Hilfe", Q_NULLPTR));
@@ -803,41 +687,19 @@ void Ui_ExerciseMainWindow::retranslateUi(Ui_ExerciseMainWindow *ExerciseMainWin
 
 
 
-/**
- * @brief Ui_ExerciseMainWindow::scaleActiveTimeslotGraphicsViewLabel
- * @param type
- */
-void Ui_ExerciseMainWindow::scaleActiveTimeslotGraphicsViewLabel(int type){
-    //DEBUG(scaleActiveTimeslotGraphicsViewLabel(int) called);
-    /*
-     * fieldCanvasTypes:
-     * 0 = full
-     * 1 = full90
-     * 2 = third
-     * 3 = half
-     * 4 = middle
-     */
-    // setGeometry(left, top, width, height
-    canvasType t = static_cast<canvasType>(type);
-    if(t==canvasType::full){
-        activeTimeslotGraphicLabel->setGeometry(QRect(300, 90, 350, 471));
-    }
-    else {
-        activeTimeslotGraphicLabel->setGeometry(QRect(140, 90, 680, 471));
-    }
-};
+
 
 
 /**
  * @brief Ui_ExerciseMainWindow::buildTimeSlotsAnimations
  */
 void Ui_ExerciseMainWindow::buildTimeSlotsAnimations(){
-    if (builtTs!=Q_NULLPTR){
-        builtTs->clear(); // potentially dagnerous
-        delete builtTs;
+    if (builtScenes!=Q_NULLPTR){
+        builtScenes->clear(); // potentially dagnerous
+        delete builtScenes;
     }
-    this->builtTs = new TimeslotImageVector();
-    this->builtTsDurations = new std::vector<int>();
+    this->builtScenes = new SceneVector();
+    this->builtSceneDurations = new std::vector<int>();
 
     int maxNrTotal = 1;
     std::list<TimeslotData*> *sortList= new std::list<TimeslotData*>();
@@ -852,10 +714,6 @@ void Ui_ExerciseMainWindow::buildTimeSlotsAnimations(){
     sortList->sort();
 
 
-    for (auto iter = sortList->begin(); iter !=sortList->end(); ++iter){
-        (*iter)->insertBuiltTimesteps(builtTs, builtTsDurations,maxNrTotal*2, gifSpeedSlider->value(), this->animationLoopCheckbox->isChecked(), this->activeTimeslotGraphicLabel);
-    }
-    int a = 3;
 
 }; // buildTimeSlotsAnimations
 
@@ -895,11 +753,19 @@ void Ui_ExerciseMainWindow::storeCurrentProgressInGif(){
         }
         */
         //LDEBUG(builtTs->size());
-        for (auto iter = builtTs->begin(); iter !=builtTs->end(); ++iter){
+        for (auto iter = builtScenes->begin(); iter !=builtScenes->end(); ++iter){
             //DEBUG(in gif loop);
-            QImage q = **iter;
+            QGraphicsScene *s = *iter;
+            QImage *p = new QImage();
+            QPainter *painter = new QPainter (p);
+            s->render(painter);
+
+            QImage q = *p;
             q =  q.scaled(QSize(400, 400), Qt::KeepAspectRatio);
             tempGif.addFrame(q, (150-gifSpeedSlider->value())/4);
+            painter->end();
+            delete painter;
+
         }
         if(this->animationLoopCheckbox->isChecked()){
             tempGif.setLoopCount(0);

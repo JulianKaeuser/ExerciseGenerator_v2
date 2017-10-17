@@ -3,13 +3,14 @@
 #include <QList>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QGraphicsScene>
 
 
 #include <memory>
 #include <vector>
 #include "exerciseitem.h"
-//#include "smartpointers.h"
-#include "paintlabel.h"
+
+
 
 class TimeslotData;
 
@@ -28,6 +29,7 @@ typedef std::vector<ExerciseItem*> ExerciseItemVector;
 #ifndef __TIMESLOTIMAGEVECTOR_T
 #define __TIMESLOTIMAGEVECTOR_T
 typedef std::vector<QImage*> TimeslotImageVector;
+typedef std::vector<QGraphicsScene*> SceneVector;
 #endif
  enum canvasType {
     full = 0,
@@ -46,9 +48,10 @@ typedef std::vector<QImage*> TimeslotImageVector;
      QListWidgetItem  *item;
      QImage *image;
      QImage *canvas;
+     QGraphicsScene *scene;
      canvasType ct;
      ExerciseItemVector objects;
-     TimeslotData(int, int, QListWidgetItem*, QImage*, QImage*, canvasType);
+     TimeslotData(int, int, QListWidgetItem*, QImage*, QImage*, canvasType, QGraphicsScene*);
      TimeslotData(const TimeslotData&);
      ~TimeslotData();
      bool operator>(const TimeslotData&);
@@ -59,11 +62,11 @@ typedef std::vector<QImage*> TimeslotImageVector;
      bool operator!=(const TimeslotData&);
 
      int getMaxNumSteps();
-     void insertBuiltTimesteps(TimeslotImageVector*, std::vector<int>*,int, int, bool, PaintLabel*);
-   //  (builtTs, builtTsDurations, gifSpeedSlider->value(), this->animationLoopCheckbox->isChecked());
+     void insertBuiltTimesteps(SceneVector*, std::vector<int>*,int);
+
 
      void computeInterpolation(int);
-     QImage* paintRawTimeSlot(const TimeslotData& ,int, PaintLabel*);
+    // QImage* paintRawTimeSlot(const TimeslotData& ,int, PaintLabel*);
 
  private:
 

@@ -30,7 +30,7 @@ SOURCES += \
     timeslotdata.cpp \
     toolutilities.cpp \
     exerciseitem.cpp \
-    paintlabel.cpp
+    tool.cpp
 
 HEADERS += \
         exercisemainwindow.h \
@@ -39,10 +39,10 @@ HEADERS += \
     globaldata.h \
     toolutilities.h \
     exerciseitem.h \
-    paintlabel.h \
     qtgifimage/src/gifimage/qgifglobal.h \
     qtgifimage/src/gifimage/qgifimage.h \
-    qtgifimage/src/gifimage/qgifimage_p.h
+    qtgifimage/src/gifimage/qgifimage_p.h \
+    tool.h
 
 FORMS += \
         exercisemainwindow.ui

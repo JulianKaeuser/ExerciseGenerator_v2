@@ -71,7 +71,7 @@ TimeslotData::TimeslotData(int number, int listIndex, QListWidgetItem* item, QIm
 {
     ExerciseItemVector *ex = new ExerciseItemVector();
     this->objects = *ex;
-}
+}; // usual constructor
 
 /**
  * @brief TimeslotData::~TimeslotData
@@ -86,13 +86,13 @@ TimeslotData::~TimeslotData(){
 TimeslotData::TimeslotData(const TimeslotData &other){
     this->number = other.number;
     this->listIndex = other.listIndex;
-    this->canvas = other.canvas;
-    this->image =  (&*(other.image));
+    this->canvas = new QImage(*other.canvas);
+    this->image =  new QImage(*other.image);
     this->ct = other.ct;
-    this->item = other.item;
-    this->objects = other.objects;
+    this->item = other.item; // must be the same, not copy; else, it will never work with listWidget
+    this->objects = *(new ExerciseItemVector(other.objects));
     this->scene = other.scene;
-}
+}; //copy constructor
 
 /**
  * @brief TimeslotData::operator !=
@@ -173,7 +173,7 @@ int TimeslotData::getMaxNumSteps(){
         }
     }
     return max;
-};
+};//getMaxNumSteps;
 
 
 /**
@@ -183,7 +183,7 @@ int TimeslotData::getMaxNumSteps(){
  * @param speed
  * @param loop
  */
-void TimeslotData::insertBuiltTimesteps(TimeslotImageVector *tsBuffer, std::vector<int> *tsDurationsBuffer,int totalMaxPoints, int speed, bool loop, PaintLabel *label){
+void TimeslotData::insertBuiltTimesteps(SceneVector *sceneBuffer, std::vector<int> *tsDurationsBuffer,int totalMaxPoints){
 
     /*
      * How to:
@@ -206,21 +206,24 @@ void TimeslotData::insertBuiltTimesteps(TimeslotImageVector *tsBuffer, std::vect
     }
     */
 
+    /*
     for (int ii = 0; ii<totalMaxPoints+1; ii++){
         tsBuffer->emplace_back(paintRawTimeSlot(*this, ii, label));
         tsDurationsBuffer->emplace_back(speed);
     }
+*/
 
 
+}; //insertBuiltTimesteps
 
-}
-    /**
+/**
  * @brief TimeslotData::computeInterpolation
  */
 void TimeslotData::computeInterpolation(int totalMaxPoints){
         int nrTotal = totalMaxPoints;
         //DEBUG(trying interpolation);
         // for each exerciseItem, construct path according to total number
+        /*
         for (auto iter = objects.begin(); iter!=objects.end(); ++iter){
 
             if ((*iter)->isDragged==paintType::single){
@@ -265,6 +268,7 @@ void TimeslotData::computeInterpolation(int totalMaxPoints){
             }// while
 
         }// for each exercise item
+        */
 } // computeInterpolation
 
 /**
@@ -272,12 +276,12 @@ void TimeslotData::computeInterpolation(int totalMaxPoints){
  * @brief paintRawTimeSlot
  * @param ts
  */
-QImage* TimeslotData::paintRawTimeSlot(const TimeslotData& tsb, int index,  PaintLabel *label){
+QImage* paintRawTimeSlot(const TimeslotData& tsb, int index){
 
     TimeslotData *tsp = new TimeslotData (tsb);
     TimeslotData ts = *tsp;
 
-    canvasType type = static_cast<canvasType>(ts.ct);
+   /* canvasType type = static_cast<canvasType>(ts.ct);
 
     QImage *im =  ( new QImage(":/imageSources/fullFieldCanvas.png"));
        switch(type){
@@ -333,6 +337,7 @@ QImage* TimeslotData::paintRawTimeSlot(const TimeslotData& tsb, int index,  Pain
         painter.end();
     }// iter over all exerciseItems
    return imageP;
+   */
 
 } //paintRawTS
 

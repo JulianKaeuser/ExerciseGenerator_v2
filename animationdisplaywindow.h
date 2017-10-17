@@ -12,7 +12,6 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 #include <QLabel>
-#include <paintlabel.h>
 
 // forward declaration
 class Ui_ExerciseMainWindow;

@@ -36,9 +36,11 @@
 #include "animationdisplaywindow.h"
 #include "timeslotdata.h"
 #include "globaldata.h"
-#include "smartpointers.h"
-#include "toolutilities.h"
-#include "paintlabel.h"
+
+//#include "toolutilities.h"
+
+#include "tool.h"
+
 
 #ifndef __TIMESLOTIMAGEVECTOR_T
 #define __TIMESLOTIMAGEVECTOR_T
@@ -58,13 +60,13 @@ public slots:
     void addTimeSlot();
     void confirmDeletion();
     void changeSelectedToolColor(int);
-    void changeCurrentCursorType(QListWidgetItem*);
+    void changeCurrentToolType(QListWidgetItem*);
     void openAnimationWindow();
     void closeAnimationWindowOnAction();
     void updateLCDNumber(QListWidgetItem*);
     void deleteSelectedTimeslot();
-    void updateCurrentSelectedTimeslot(QListWidgetItem*);
-    void updateCurrentSelectedTool(QListWidgetItem*);
+    void updateCurrentSelectedTimeslotItem(QListWidgetItem*);
+    void updateCurrentSelectedToolItem(QListWidgetItem*);
 
     void rotateCurrentToolRight();
     void rotateCurrentToolLeft();
@@ -93,7 +95,6 @@ public:
     QSlider *gifSpeedSlider;
     QPushButton *animationShowPushButton;
     QCheckBox *animationLoopCheckbox;
-    PaintLabel *activeTimeslotGraphicLabel;
     QLCDNumber *timeslotSelectedLCDNumber;
     QMenuBar *menuBar;
     QMenu *menuDatei;
@@ -104,14 +105,10 @@ public:
     QGraphicsView *graphicsView;
     QGraphicsScene *graphicScene;
 
-    PaintLabel *arrowLabel = Q_NULLPTR;
     void addExerciseItem(ExerciseItem*);
     QCursor* getCurrentSelectedCursor();
-    toolType getCurrentSelectedToolType();
+    Tool* getCurrentSelectedToolType();
     void repaintTimeSlot();
-
-    bool labelNotClickable;
-
 
 
     void setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, int a);
@@ -125,13 +122,10 @@ private:
     Ui_ExerciseMainWindow *mw = Q_NULLPTR;
 
     // Which time slot is currently in selection
-    QListWidgetItem* currentSelectedTimeslot = Q_NULLPTR;
+    QListWidgetItem* currentSelectedTimeslotItem = Q_NULLPTR;
 
     // which tool is currently in selection
-    QListWidgetItem* currentSelectedTool = Q_NULLPTR;
-
-    //Which cursor is currently active
-    QCursor* currentSelectedCursor = Q_NULLPTR;
+    QListWidgetItem* currentSelectedToolItem = Q_NULLPTR;
 
     // animation Player Window
     AnimationDisplayWindow *animationWindow = Q_NULLPTR;
@@ -140,27 +134,17 @@ private:
     globalData *globaldata = nullptr;
 
     // current tool type
-    toolType currentToolType;
+    Tool *currentTool;
 
-    int currentNumRotationsRight;
-    int currentNumRotationsLeft;
-
-    // avoid loop at one point
-    bool repaintFlag = true;
 
     //methods
-    void scaleActiveTimeslotGraphicsViewLabel(int);
 
     void storeCurrentProgressInGif();
 
     void buildTimeSlotsAnimations();
 
-    TimeslotImageVector *builtTs = Q_NULLPTR;
-    std::vector<int> *builtTsDurations = Q_NULLPTR;
-
-
-
-
+    SceneVector *builtScenes = Q_NULLPTR;
+    std::vector<int> *builtSceneDurations = Q_NULLPTR;
 
 
 };
