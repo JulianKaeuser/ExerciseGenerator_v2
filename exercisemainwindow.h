@@ -36,6 +36,7 @@
 #include "animationdisplaywindow.h"
 #include "timeslotdata.h"
 #include "globaldata.h"
+#include "exercisegraphicsscene.h"
 
 //#include "toolutilities.h"
 
@@ -103,7 +104,7 @@ public:
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
     QGraphicsView *graphicsView;
-    QGraphicsScene *graphicScene;
+
 
     void addExerciseItem(ExerciseItem*);
     QCursor* getCurrentSelectedCursor();
@@ -135,6 +136,12 @@ private:
 
     // current tool type
     Tool *currentTool;
+
+    // current QGraphics Scene
+    ExerciseGraphicsScene *currentScene;
+
+    //current Ts as TimeslotData
+    TimeslotData *currentTimeslotData;
 
 
     //methods

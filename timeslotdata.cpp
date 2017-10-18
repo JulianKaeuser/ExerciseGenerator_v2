@@ -60,12 +60,13 @@ private:
  * @param canvas
  * @param ct
  */
-TimeslotData::TimeslotData(int number, int listIndex, QListWidgetItem* item, QImage *image, QImage *canvas, canvasType ct, QGraphicsScene* scene):
+TimeslotData::TimeslotData(int number, int listIndex, QListWidgetItem* item, /*QImage *image,*/ QImage *canvas, canvasType ct, ExerciseGraphicsScene* scene, QGraphicsPixmapItem* canvasItem):
     number(number),
     listIndex(listIndex),
     item(item),
-    image(image),
+  /*image(image),*/
     canvas(canvas),
+    canvasItem(canvasItem),
     scene(scene),
     ct(ct)
 {
@@ -87,11 +88,12 @@ TimeslotData::TimeslotData(const TimeslotData &other){
     this->number = other.number;
     this->listIndex = other.listIndex;
     this->canvas = new QImage(*other.canvas);
-    this->image =  new QImage(*other.image);
+  //this->image =  new QImage(*other.image);
     this->ct = other.ct;
     this->item = other.item; // must be the same, not copy; else, it will never work with listWidget
     this->objects = *(new ExerciseItemVector(other.objects));
     this->scene = other.scene;
+    this->canvasItem = other.canvasItem;
 }; //copy constructor
 
 /**
@@ -104,7 +106,7 @@ bool TimeslotData::operator !=(const TimeslotData &other){
     if(this->ct != other.ct) return false;
     if(this->item != other.item) return false;
     if(this->listIndex != other.listIndex) return false;
-    if(this->image != other.image) return false;
+  //if(this->image != other.image) return false;
     if(this->number != other.number) return false;
     if(this->scene != other.scene) return false;
     return true;

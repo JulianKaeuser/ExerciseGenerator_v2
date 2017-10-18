@@ -80,9 +80,10 @@ Tool::Tool(toolType type, QColor color, int rotation):
     puckImage = new QImage(10, 10, FORMAT);
     QPainter painter (puckImage);
     QPen pen (Qt::black);
-    pen.setWidth(10);
+    pen.setWidth(1);
     painter.setPen(pen);
-    painter.drawPoint(5, 5);
+    painter.setBrush(Qt::black);
+    painter.drawEllipse(QPoint(5, 5), 3, 3);
     painter.end();
     this->setType(type);
 }// usual constructor
@@ -156,7 +157,7 @@ void Tool::setType(toolType type){
         assignColor(baseImage, this->color);
 
         QPainter painter (baseImage);
-            painter.drawImage(baseImage->height()-10, baseImage->width()-10, *puckImage);
+            painter.drawImage(baseImage->height()-12, baseImage->width()-10, *puckImage);
             QString text("D");
             painter.drawText(10, 10, text);
             painter.end();
@@ -178,7 +179,7 @@ void Tool::setType(toolType type){
         assignColor(baseImage, this->color);
 
         QPainter painter (baseImage);
-            painter.drawImage(baseImage->height()-10, baseImage->width()-10, *puckImage);
+            painter.drawImage(baseImage->height()-12, baseImage->width()-10, *puckImage);
             QString text("D");
             painter.drawText(10, 10, text);
             painter.end();

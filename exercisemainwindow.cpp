@@ -54,7 +54,7 @@
  * @param fieldCanvasType
  */
 void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasType){
-    //DEBUG(assignSelectedTimeSlotFieldCanvas(int) called);
+    DEBUG(assignSelectedTimeSlotFieldCanvas(int) called);
     /*
      * fieldCanvasTypes:
      * 0 = full
@@ -94,9 +94,18 @@ void Ui_ExerciseMainWindow::assignSelectedTimeslotFieldCanvas(int fieldCanvasTyp
             default:
                 return;
             }
-       ts->ct = type;
+       this->currentScene->removeItem(currentTimeslotData->canvasItem);
+       delete (currentTimeslotData->canvasItem);
+       currentTimeslotData->canvas = im;
+       currentTimeslotData->ct = type;
+       currentTimeslotData->canvasItem = new QGraphicsPixmapItem(QPixmap::fromImage(QImage(*im).scaled(QSize(660, 470), Qt::KeepAspectRatio)));
+       this->currentScene = ts->scene;
+       this->currentScene->addItem(currentTimeslotData->canvasItem);
+       currentTimeslotData->canvasItem->setZValue(-1);
+               //addPixmap(QPixmap::fromImage(QImage(":imageSources/fullField90Canvas.png").scaled(QSize(660, 470), Qt::KeepAspectRatio)));
+       graphicsView->setScene(currentScene);
 
-};
+}; //assignSelectedTimeslotFieldCanvas
 
 /**
   Adds a timeslot to the data base and the widget list
@@ -112,13 +121,18 @@ void Ui_ExerciseMainWindow::addTimeSlot(){
 
 
     QListWidgetItem *newTs = new QListWidgetItem(timeslotsListWidget);
-    (*(globaldata->timeslots))[(newTs)] = (new TimeslotData(newIndex,  timeslotsListWidget->row(newTs), (newTs), Q_NULLPTR, (im), canvasType::full90, new QGraphicsScene(centralWidget)));
+    (*(globaldata->timeslots))[(newTs)] =
+    (new TimeslotData(newIndex,  timeslotsListWidget->row(newTs), (newTs), Q_NULLPTR,
+                      /*(im),*/ canvasType::full90, new ExerciseGraphicsScene(centralWidget), new QGraphicsPixmapItem(QPixmap::fromImage(QImage(*im).scaled(QSize(660, 470), Qt::KeepAspectRatio)))));
 
     QListWidgetItem *prevTs = currentSelectedTimeslotItem;
     currentSelectedTimeslotItem = newTs;
+    currentTimeslotData = (*(globaldata->timeslots))[(newTs)];
+    currentScene = currentTimeslotData->scene;
     assignSelectedTimeslotFieldCanvas(0);
 
     timeslotsListWidget->setCurrentItem(newTs);
+
 
 
     QString qstr(std::to_string(newIndex).c_str());
@@ -234,10 +248,7 @@ void Ui_ExerciseMainWindow::deleteSelectedTimeslot(){
        TimeslotData* ts =  (*( globaldata->timeslots))[currentSelectedTimeslotItem];
        ts->objects.clear();
        canvasType ct = ts->ct;
-               ts->ct = canvasType::unused;
-       assignSelectedTimeslotFieldCanvas(ct);
-
-        repaintTimeSlot();
+       assignSelectedTimeslotFieldCanvas(static_cast<int>(ct));
         return;
     }
     if(currentSelectedTimeslotItem==Q_NULLPTR){
@@ -258,11 +269,15 @@ void Ui_ExerciseMainWindow::deleteSelectedTimeslot(){
    // delete toDelete;
 
     // assign new numbers and texts
+
     std::list<TimeslotData> *timeslotList = new std::list<TimeslotData>();
     for (auto iter = globaldata->timeslots->begin(); iter != globaldata->timeslots->end(); ++iter){
+        LDEBUG((*iter).second->image);
         timeslotList->emplace_back(*((*iter).second) );
     }
+
     timeslotList->sort();
+
     int ii = 1;
     for (auto iter = timeslotList->begin(); iter != timeslotList->end(); ++iter){
         (*iter).item->setText(std::to_string(ii).c_str());
@@ -283,9 +298,13 @@ void Ui_ExerciseMainWindow::updateCurrentSelectedTimeslotItem(QListWidgetItem* c
     int comboBoxIndex = 0;
     if((*(globaldata->timeslots))[(clickedItem)] !=nullptr){
         comboBoxIndex = static_cast<int>((*(globaldata->timeslots))[(clickedItem)]->ct);
+        currentTimeslotData = (*(globaldata->timeslots))[(clickedItem)];
     }
 
+
     this->timeslotFieldCanvasSelectComboBox->setCurrentIndex(comboBoxIndex);
+    this->assignSelectedTimeslotFieldCanvas(static_cast<int>((*(globaldata->timeslots))[clickedItem]->ct));
+    this->graphicsView->setScene(currentTimeslotData->scene);
 
 
 } // updatecurrentSelectedTimeslotItem
@@ -468,19 +487,34 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         animationLoopCheckbox->setObjectName(QStringLiteral("animationLoopCheckbox"));
         animationLoopCheckbox->setGeometry(QRect(1000, 560, 91, 26));
 
+        // current selected Time slot
+        this->currentSelectedTimeslotItem = timeslotsListWidget->item(0);
 
         /*
          * Graphics Scene (usually current)
          */
-        graphicScene = new QGraphicsScene(centralWidget);
-        graphicScene->setObjectName(QStringLiteral("graphicsScene"));
-        graphicScene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(QImage(":imageSources/fullFieldCanvas.png").scaled(QSize(660, 470), Qt::KeepAspectRatio))));
+        currentScene = new ExerciseGraphicsScene(centralWidget);
+        currentScene->setObjectName(QStringLiteral("graphicsScene"));
+
+        QImage cv (":imageSources/fullFieldCanvas.png");
+        cv = cv.scaled(QSize(660, 470), Qt::KeepAspectRatio);
+        QGraphicsPixmapItem *firstItem = new QGraphicsPixmapItem(QPixmap::fromImage(cv));
+        currentTimeslotData = new TimeslotData(1, 0, currentSelectedTimeslotItem, &cv, /*Q_NULLPTR,*/ canvasType::full, currentScene, firstItem);
+        currentScene->addItem(firstItem);
+        currentTimeslotData->canvasItem->setZValue(-1);
+        (*(globaldata->timeslots))[currentSelectedTimeslotItem] = currentTimeslotData;
 
         // graphics View
         graphicsView = new QGraphicsView(centralWidget);
         graphicsView->setGeometry(QRect(140,90,670,480));
         graphicsView->setObjectName(QStringLiteral("graphicsView"));
-        graphicsView->setScene(graphicScene);
+        graphicsView->setScene(currentScene);
+        QGraphicsSimpleTextItem *aP = new QGraphicsSimpleTextItem(QString("Hello"));
+        aP->setFlag(QGraphicsItem::ItemIsMovable);
+        currentScene->addItem(aP);
+
+        graphicsView->setMouseTracking(true);
+
 
 
         // LCD to show number of selected step
@@ -531,8 +565,7 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         timeslotsListWidget->setCurrentRow(0);
         updateLCDNumber(timeslotsListWidget->item(0));
 
-        // current selected Time slot
-        this->currentSelectedTimeslotItem = timeslotsListWidget->item(0);
+
 
 
 
@@ -767,7 +800,7 @@ void Ui_ExerciseMainWindow::storeCurrentProgressInGif(){
         //LDEBUG(builtTs->size());
         for (auto iter = builtScenes->begin(); iter !=builtScenes->end(); ++iter){
             //DEBUG(in gif loop);
-            QGraphicsScene *s = *iter;
+            ExerciseGraphicsScene *s = *iter;
             QImage *p = new QImage();
             QPainter *painter = new QPainter (p);
             s->render(painter);

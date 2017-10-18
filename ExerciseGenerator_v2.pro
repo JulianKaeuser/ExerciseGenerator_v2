@@ -30,7 +30,9 @@ SOURCES += \
     timeslotdata.cpp \
     toolutilities.cpp \
     exerciseitem.cpp \
-    tool.cpp
+    tool.cpp \
+    graphicsexerciseitem.cpp \
+    exercisegraphicsscene.cpp
 
 HEADERS += \
         exercisemainwindow.h \
@@ -42,7 +44,9 @@ HEADERS += \
     qtgifimage/src/gifimage/qgifglobal.h \
     qtgifimage/src/gifimage/qgifimage.h \
     qtgifimage/src/gifimage/qgifimage_p.h \
-    tool.h
+    tool.h \
+    graphicsexerciseitem.h \
+    exercisegraphicsscene.h
 
 FORMS += \
         exercisemainwindow.ui

@@ -8,17 +8,19 @@
 #include <QGraphicsPixmapItem>
 #include <QImage>
 
+#include "graphicsexerciseitem.h"
+
 
 typedef std::vector<QPoint> PointList;
 
 class ExerciseItem
 {
 public:
-    ExerciseItem(QPoint, Tool&, bool, PointList*, QGraphicsPixmapItem*);
+    ExerciseItem(QPoint point, Tool& tool, bool isNotSingle, PointList* movementPoints, GraphicsExerciseItem* sceneItem);
     ExerciseItem(const ExerciseItem&);
     ~ExerciseItem();
     QPoint point;
-    QGraphicsPixmapItem *gItem;
+    GraphicsExerciseItem *gItem;
     Tool *tool;
     bool isNotSingle;
     PointList *movementPoints;

@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 
 
+#include "exercisegraphicsscene.h"
 #include <memory>
 #include <vector>
 #include "exerciseitem.h"
@@ -29,7 +30,7 @@ typedef std::vector<ExerciseItem*> ExerciseItemVector;
 #ifndef __TIMESLOTIMAGEVECTOR_T
 #define __TIMESLOTIMAGEVECTOR_T
 typedef std::vector<QImage*> TimeslotImageVector;
-typedef std::vector<QGraphicsScene*> SceneVector;
+typedef std::vector<ExerciseGraphicsScene*> SceneVector;
 #endif
  enum canvasType {
     full = 0,
@@ -48,10 +49,11 @@ typedef std::vector<QGraphicsScene*> SceneVector;
      QListWidgetItem  *item;
      QImage *image;
      QImage *canvas;
-     QGraphicsScene *scene;
+     QGraphicsPixmapItem *canvasItem;
+     ExerciseGraphicsScene *scene;
      canvasType ct;
      ExerciseItemVector objects;
-     TimeslotData(int, int, QListWidgetItem*, QImage*, QImage*, canvasType, QGraphicsScene*);
+     TimeslotData(int number, int listIndex, QListWidgetItem* item, /*QImage* image,*/ QImage* canvas, canvasType ct, ExerciseGraphicsScene* scene, QGraphicsPixmapItem* canvasItem);
      TimeslotData(const TimeslotData&);
      ~TimeslotData();
      bool operator>(const TimeslotData&);

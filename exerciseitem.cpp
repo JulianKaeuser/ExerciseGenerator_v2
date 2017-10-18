@@ -14,7 +14,7 @@
  * @param type
  * @param color
  */
-ExerciseItem::ExerciseItem(QPoint point, Tool &tool,bool isNotSingle, PointList *list, QGraphicsPixmapItem *pixItem):
+ExerciseItem::ExerciseItem(QPoint point, Tool &tool,bool isNotSingle, PointList *list, GraphicsExerciseItem *pixItem):
     point(point),
     tool(&tool),
     isNotSingle(isNotSingle),
@@ -35,7 +35,7 @@ ExerciseItem::ExerciseItem(const ExerciseItem &other){
     this->isNotSingle = other.isNotSingle;
     PointList *pL = new PointList(*other.movementPoints);
     this->movementPoints = pL;
-    this->gItem = new QGraphicsPixmapItem(other.gItem);
+    this->gItem = new GraphicsExerciseItem(*other.gItem);
 }; // copy constructor
 
 /**
