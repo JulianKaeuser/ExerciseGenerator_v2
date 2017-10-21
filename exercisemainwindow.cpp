@@ -123,7 +123,7 @@ void Ui_ExerciseMainWindow::addTimeSlot(){
     QListWidgetItem *newTs = new QListWidgetItem(timeslotsListWidget);
     (*(globaldata->timeslots))[(newTs)] =
     (new TimeslotData(newIndex,  timeslotsListWidget->row(newTs), (newTs), Q_NULLPTR,
-                      /*(im),*/ canvasType::full90, new ExerciseGraphicsScene(centralWidget), new QGraphicsPixmapItem(QPixmap::fromImage(QImage(*im).scaled(QSize(660, 470), Qt::KeepAspectRatio)))));
+                      /*(im),*/ canvasType::full90, new ExerciseGraphicsScene(centralWidget, this), new QGraphicsPixmapItem(QPixmap::fromImage(QImage(*im).scaled(QSize(660, 470), Qt::KeepAspectRatio)))));
 
     QListWidgetItem *prevTs = currentSelectedTimeslotItem;
     currentSelectedTimeslotItem = newTs;
@@ -200,6 +200,8 @@ void Ui_ExerciseMainWindow::changeCurrentToolType(QListWidgetItem* exerciseItem)
     //    delete(oldTool);
     //}
     DEBUG(changeCurrentToolType() finished);
+        this->setItemAddable(true);
+    this->isTextTool = false;
 };//changeCurrentToolType
 
 /**
@@ -345,8 +347,17 @@ Tool* Ui_ExerciseMainWindow::getCurrentSelectedToolType(){
 void Ui_ExerciseMainWindow::repaintTimeSlot(){
   TimeslotData *ts = (*(this->globaldata->timeslots))[currentSelectedTimeslotItem];
 
-
 }; // repaintTimeSlot()
+
+void Ui_ExerciseMainWindow::setTextItem(){
+    DEBUG(setTectItem called);
+    this->isTextTool = true;
+    this->itemAddable = true;
+    mw->setCursor(QCursor());
+
+}// setTextItem
+
+
 
 void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, int a)
     {
@@ -472,7 +483,10 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         timeslotsDeletePushButton->setObjectName(QStringLiteral("timeslotsDeletePushButton"));
         timeslotsDeletePushButton->setGeometry(QRect(1060, 370, 85, 30));
 
-
+        //button for text label
+        setTextItemPushbutton = new QPushButton(centralWidget);
+        setTextItemPushbutton->setObjectName(QStringLiteral("setTextItemPushbutton"));
+        setTextItemPushbutton->setGeometry(QRect(1135, 130, 60, 30));
         /*
          *  Animation Toggling
          */
@@ -493,7 +507,7 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         /*
          * Graphics Scene (usually current)
          */
-        currentScene = new ExerciseGraphicsScene(centralWidget);
+        currentScene = new ExerciseGraphicsScene(centralWidget, this);
         currentScene->setObjectName(QStringLiteral("graphicsScene"));
 
         QImage cv (":imageSources/fullFieldCanvas.png");
@@ -509,13 +523,12 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         graphicsView->setGeometry(QRect(140,90,670,480));
         graphicsView->setObjectName(QStringLiteral("graphicsView"));
         graphicsView->setScene(currentScene);
-        QGraphicsSimpleTextItem *aP = new QGraphicsSimpleTextItem(QString("Hello"));
-        aP->setFlag(QGraphicsItem::ItemIsMovable);
-        currentScene->addItem(aP);
 
         graphicsView->setMouseTracking(true);
 
-
+        itemAddable = false;
+        isTextTool = false;
+        itemMovewayClicked = false;
 
         // LCD to show number of selected step
         timeslotSelectedLCDNumber = new QLCDNumber(centralWidget);
@@ -622,6 +635,9 @@ void Ui_ExerciseMainWindow::setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, i
         QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(updateCurrentSelectedToolItem(QListWidgetItem*)));
         QObject::connect(toolsListWidget, SIGNAL(itemClicked(QListWidgetItem*)), ExerciseMainWindow, SLOT(changeCurrentToolType(QListWidgetItem*)));
 
+        // clicks on text button
+        QObject::connect(setTextItemPushbutton, SIGNAL(clicked(bool)), ExerciseMainWindow, SLOT(setTextItem()));
+
         QMetaObject::connectSlotsByName(ExerciseMainWindow);
     } // setupUi
 
@@ -721,14 +737,51 @@ void Ui_ExerciseMainWindow::retranslateUi(Ui_ExerciseMainWindow *ExerciseMainWin
         animationShowPushButton->setText(QApplication::translate("ExerciseMainWindow", "Animation abspielen", Q_NULLPTR));
         animationLoopCheckbox->setText(QApplication::translate("ExerciseMainWindow", "Schleife", Q_NULLPTR));
 
+        setTextItemPushbutton->setText(QApplication::translate("ExerciseMainWindow", "Text", Q_NULLPTR));
+
         menuDatei->setTitle(QApplication::translate("ExerciseMainWindow", "Datei", Q_NULLPTR));
         menuBearbeiten->setTitle(QApplication::translate("ExerciseMainWindow", "Bearbeiten", Q_NULLPTR));
         menuInfo->setTitle(QApplication::translate("ExerciseMainWindow", "Hilfe", Q_NULLPTR));
 
         toolRotateRightPushButton->setText(QApplication::translate("ExerciseMainWindow", "-45°", Q_NULLPTR));
         toolRotateLeftPushButton->setText(QApplication::translate("ExerciseMainWindow", "+45°", Q_NULLPTR));
-    } // retranslateUi
+}//retranslateUi
 
+/**
+ * @brief Ui_ExerciseMainWindow::setItemAddable
+ * @param addable
+ */
+void Ui_ExerciseMainWindow::setItemAddable(bool addable)
+{
+    this->itemAddable = addable;
+    if (addable){
+        // change cursor accordingly
+        this->mw->setCursor(*(currentTool->getCursor()));
+    }
+    else{
+        // change cursor of window back
+        this->mw->setCursor(QCursor());
+    }
+}// setItemAddable
+
+/**
+ * @brief Ui_ExerciseMainWindow::isItemAddable
+ * @return
+ */
+bool Ui_ExerciseMainWindow::isItemAddable(){
+    return itemAddable;
+} // isItemAddable
+
+/**
+ * @brief Ui_ExerciseMainWindow::generateCurrentGraphicsExerciseItem
+ * @return
+ *
+GraphicsExerciseItem *Ui_ExerciseMainWindow::generateCurrentGraphicsExerciseItem(const QPointF &point)
+{
+    GraphicsExerciseItem *it = new GraphicsExerciseItem();
+
+} // generateCurrentGraphicsExerciseItem
+*/
 
 
 
@@ -824,3 +877,35 @@ void Ui_ExerciseMainWindow::storeCurrentProgressInGif(){
 
 }; //storeCUrrentProgressInGif
 
+
+/**
+ * @brief Ui_ExerciseMainWindow::isTextItem
+ * @return
+ */
+bool Ui_ExerciseMainWindow::isTextItem(){
+    return this->isTextTool;
+} // isTextItem
+
+/**
+ * @brief Ui_ExerciseMainWindow::getCurrentScene
+ * @return
+ */
+QGraphicsScene* Ui_ExerciseMainWindow::getCurrentScene() {
+    return this->currentScene;
+} // getCurrentScene
+
+/**
+ * @brief Ui_ExerciseMainWindow::setMovewayClicked
+ * @param clicked
+ */
+void Ui_ExerciseMainWindow::setMovewayClicked(bool clicked){
+    this->itemMovewayClicked = clicked;
+}//setMovewayClicked
+
+/**
+ * @brief Ui_ExerciseMainWindow::isMovewayClicked
+ * @return
+ */
+bool Ui_ExerciseMainWindow::isMovewayClicked(){
+    return this->itemMovewayClicked;
+} //isMovewayClicked

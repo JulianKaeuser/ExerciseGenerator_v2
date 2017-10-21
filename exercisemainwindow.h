@@ -37,6 +37,7 @@
 #include "timeslotdata.h"
 #include "globaldata.h"
 #include "exercisegraphicsscene.h"
+#include "graphicsexerciseitem.h"
 
 //#include "toolutilities.h"
 
@@ -72,6 +73,7 @@ public slots:
     void rotateCurrentToolRight();
     void rotateCurrentToolLeft();
 
+    void setTextItem();
 
 public:
     QAction *action_ber;
@@ -92,6 +94,7 @@ public:
     QPushButton *timeslotsDeletePushButton;
     QPushButton *toolRotateRightPushButton;
     QPushButton *toolRotateLeftPushButton;
+    QPushButton *textPushButton;
     QComboBox *toolColorSelectComboBox;
     QSlider *gifSpeedSlider;
     QPushButton *animationShowPushButton;
@@ -104,6 +107,7 @@ public:
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
     QGraphicsView *graphicsView;
+    QPushButton *setTextItemPushbutton;
 
 
     void addExerciseItem(ExerciseItem*);
@@ -115,6 +119,20 @@ public:
     void setupUi(Ui_ExerciseMainWindow *ExerciseMainWindow, int a);
 
     void retranslateUi(Ui_ExerciseMainWindow *ExerciseMainWindow);
+
+    GraphicsExerciseItem* generateCurrentGraphicsExerciseItem(const QPointF& point);
+
+    void setItemAddable(bool addable);
+    bool isItemAddable();
+
+    bool isTextItem();
+
+    QGraphicsScene* getCurrentScene();
+
+    void setMovewayClicked(bool);
+
+    bool isMovewayClicked();
+
 
 protected:
 
@@ -142,6 +160,15 @@ private:
 
     //current Ts as TimeslotData
     TimeslotData *currentTimeslotData;
+
+    // whether item may be added by mouse
+    bool itemAddable;
+
+    //whether text or player should be added
+    bool isTextTool;
+
+    // whether a move should be performed
+    bool itemMovewayClicked;
 
 
     //methods

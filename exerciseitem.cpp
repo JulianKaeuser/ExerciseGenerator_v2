@@ -35,7 +35,7 @@ ExerciseItem::ExerciseItem(const ExerciseItem &other){
     this->isNotSingle = other.isNotSingle;
     PointList *pL = new PointList(*other.movementPoints);
     this->movementPoints = pL;
-    this->gItem = new GraphicsExerciseItem(*other.gItem);
+    this->gItem = other.gItem;
 }; // copy constructor
 
 /**

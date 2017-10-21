@@ -5,6 +5,9 @@
 #include <QGraphicsScene>
 #include <QMouseEvent>
 
+//forward declaration
+class Ui_ExerciseMainWindow;
+
 #include <iostream>
 #define _LIT(x) # x
 #define DEBUG(x) (std::cout << _LIT(x) << std::endl)
@@ -14,10 +17,15 @@ class ExerciseGraphicsScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    ExerciseGraphicsScene(QObject* parent);
-    ExerciseGraphicsScene();
+    ExerciseGraphicsScene(QObject* parent, Ui_ExerciseMainWindow* mw);
+    ExerciseGraphicsScene(Ui_ExerciseMainWindow* mw);
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
+
+
+
+private:
+    Ui_ExerciseMainWindow *mw;
 };
 
 #endif // EXERCISEGRAPHICSSCENE_H

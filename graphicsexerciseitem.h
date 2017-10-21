@@ -2,7 +2,7 @@
 #ifndef GRAPHICSEXERCISEITEM_H
 #define GRAPHICSEXERCISEITEM_H
 
-#include <QObject>
+//#include <QObject>
 #include <QGraphicsItem>
 
 // forward declaration
@@ -13,19 +13,24 @@ class ExerciseItem;
 
 
 
-class GraphicsExerciseItem //: public QGraphicsItem
+class GraphicsExerciseItem : public QGraphicsPixmapItem
 {
 
-  //  Q_OBJECT
+
 public:
     GraphicsExerciseItem();
-    GraphicsExerciseItem(const GraphicsExerciseItem& other);
+    GraphicsExerciseItem(QGraphicsItem* parent);
+    GraphicsExerciseItem(const QPixmap& pix, Ui_ExerciseMainWindow* mw);
+    GraphicsExerciseItem(const GraphicsExerciseItem& other) = delete;
     Ui_ExerciseMainWindow *mw;
     QGraphicsScene *scene;
     ExerciseItem *eItem;
+    QImage *image;
 
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
+
+
+
 
 
 protected:

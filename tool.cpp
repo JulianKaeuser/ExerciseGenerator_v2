@@ -261,7 +261,7 @@ void Tool::setType(toolType type){
         QTransform trans = transform.rotate(currentRotation);
         QPixmap pix = QPixmap::fromImage(*baseImage);
         QPixmap *pixM = new QPixmap(pix.transformed(trans));
-    this->cursor = new QCursor(*pixM);
+    this->cursor = new QCursor(*pixM, 0, 0);
 
 
 
