@@ -6,6 +6,12 @@
 #include <QMouseEvent>
 
 //forward declaration
+class GraphicsExerciseItem;
+
+#include <vector>
+#include <utility>
+
+//forward declaration
 class Ui_ExerciseMainWindow;
 
 #include <iostream>
@@ -19,6 +25,14 @@ class ExerciseGraphicsScene : public QGraphicsScene
 public:
     ExerciseGraphicsScene(QObject* parent, Ui_ExerciseMainWindow* mw);
     ExerciseGraphicsScene(Ui_ExerciseMainWindow* mw);
+    ExerciseGraphicsScene(const ExerciseGraphicsScene& other);
+    ~ExerciseGraphicsScene();
+    qreal getMaxPathLength();
+
+    void addExerciseItem(GraphicsExerciseItem* item);
+    void deleteExerciseItem(GraphicsExerciseItem* item);
+    std::vector<GraphicsExerciseItem*> getExerciseItems() const;
+
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
@@ -26,6 +40,7 @@ public:
 
 private:
     Ui_ExerciseMainWindow *mw;
+    std::vector<GraphicsExerciseItem*> exerciseItems;
 };
 
 #endif // EXERCISEGRAPHICSSCENE_H

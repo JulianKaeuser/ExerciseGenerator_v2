@@ -54,3 +54,13 @@ ExerciseItem::~ExerciseItem(){
 QImage const &   ExerciseItem::getIcon(){
     return this->tool->getCursor()->pixmap().toImage();
 }// getIcon
+
+/**
+ * @brief ExerciseItem::getMovementOffsetQPoint
+ * @return
+ */
+QPointF ExerciseItem::getMovementOffsetQPoint(){
+    qreal xOff = this->tool->getBaseImage()->width()/2;
+    qreal yOff = this->tool->getBaseImage()->height()/2;
+    return QPointF(xOff, yOff);
+}//getMovementOffsetQPoint

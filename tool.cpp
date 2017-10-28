@@ -79,6 +79,7 @@ Tool::Tool(toolType type, QColor color, int rotation):
 {
     puckImage = new QImage(10, 10, FORMAT);
     QPainter painter (puckImage);
+     painter.setRenderHints(QPainter::Antialiasing);
     QPen pen (Qt::black);
     pen.setWidth(1);
     painter.setPen(pen);
@@ -145,6 +146,7 @@ void Tool::setType(toolType type){
         baseImage = new QImage(":/imageSources/player.png");
         assignColor(baseImage, this->color);
         QPainter painter (baseImage);
+         painter.setRenderHints(QPainter::Antialiasing);
             QString text("F");
             painter.drawText(10, 10, text);
             painter.end();
@@ -157,7 +159,8 @@ void Tool::setType(toolType type){
         assignColor(baseImage, this->color);
 
         QPainter painter (baseImage);
-            painter.drawImage(baseImage->height()-12, baseImage->width()-10, *puckImage);
+         painter.setRenderHints(QPainter::Antialiasing);
+            painter.setRenderHints(QPainter::Antialiasing); painter.drawImage(baseImage->height()-12, baseImage->width()-10, *puckImage);
             QString text("D");
             painter.drawText(10, 10, text);
             painter.end();
@@ -168,6 +171,7 @@ void Tool::setType(toolType type){
         baseImage = new QImage(":/imageSources/player.png");
         assignColor(baseImage, this->color);
         QPainter painter (baseImage);
+         painter.setRenderHints(QPainter::Antialiasing);
             QString text("D");
             painter.drawText(10, 10, text);
             painter.end();
@@ -179,7 +183,7 @@ void Tool::setType(toolType type){
         assignColor(baseImage, this->color);
 
         QPainter painter (baseImage);
-            painter.drawImage(baseImage->height()-12, baseImage->width()-10, *puckImage);
+            painter.setRenderHints(QPainter::Antialiasing); painter.drawImage(baseImage->height()-12, baseImage->width()-10, *puckImage);
             QString text("D");
             painter.drawText(10, 10, text);
             painter.end();
@@ -189,7 +193,7 @@ void Tool::setType(toolType type){
     case(puck):{
          baseImage = new QImage(10, 10, FORMAT);
             QPainter painter (baseImage);
-            painter.drawImage(0, 0, *puckImage);
+            painter.setRenderHints(QPainter::Antialiasing); painter.drawImage(0, 0, *puckImage);
             painter.end();
         this->color = Qt::black;
         this->dragStatus = dragType::path;
@@ -205,7 +209,7 @@ void Tool::setType(toolType type){
     case(pass):{
         baseImage = new QImage(10, 10, FORMAT);
            QPainter painter (baseImage);
-           painter.drawImage(0, 0, *puckImage);
+           painter.setRenderHints(QPainter::Antialiasing); painter.drawImage(0, 0, *puckImage);
            painter.end();
        this->color = Qt::black;
        this->dragStatus = dragType::path;
@@ -214,7 +218,7 @@ void Tool::setType(toolType type){
     case(slapshot):{
         baseImage = new QImage(10, 10, FORMAT);
            QPainter painter (baseImage);
-           painter.drawImage(0, 0, *puckImage);
+           painter.setRenderHints(QPainter::Antialiasing); painter.drawImage(0, 0, *puckImage);
            painter.end();
        this->color = Qt::black;
        this->dragStatus = dragType::path;
@@ -223,7 +227,7 @@ void Tool::setType(toolType type){
     case(wristshot):{
         baseImage = new QImage(10, 10, FORMAT);
            QPainter painter (baseImage);
-           painter.drawImage(0, 0, *puckImage);
+           painter.setRenderHints(QPainter::Antialiasing); painter.drawImage(0, 0, *puckImage);
            painter.end();
        this->color = Qt::black;
        this->dragStatus = dragType::path;
@@ -240,6 +244,7 @@ void Tool::setType(toolType type){
         baseImage = new QImage(":/imageSources/line.png");
         assignColor(baseImage, this->color);
         QPainter painter (baseImage);
+         painter.setRenderHints(QPainter::Antialiasing);
             QString text("F");
             painter.drawText(10, 10, text);
             painter.end();
@@ -250,6 +255,7 @@ void Tool::setType(toolType type){
         baseImage = new QImage(":/imageSources/line.png");
         assignColor(baseImage, this->color);
         QPainter painter (baseImage);
+         painter.setRenderHints(QPainter::Antialiasing);
             QString text("D");
             painter.drawText(10, 10, text);
             painter.end();

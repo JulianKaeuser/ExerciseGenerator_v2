@@ -32,7 +32,8 @@ SOURCES += \
     exerciseitem.cpp \
     tool.cpp \
     graphicsexerciseitem.cpp \
-    exercisegraphicsscene.cpp
+    exercisegraphicsscene.cpp \
+    movementexerciseitem.cpp
 
 HEADERS += \
         exercisemainwindow.h \
@@ -46,7 +47,8 @@ HEADERS += \
     qtgifimage/src/gifimage/qgifimage_p.h \
     tool.h \
     graphicsexerciseitem.h \
-    exercisegraphicsscene.h
+    exercisegraphicsscene.h \
+    movementexerciseitem.h
 
 FORMS += \
         exercisemainwindow.ui

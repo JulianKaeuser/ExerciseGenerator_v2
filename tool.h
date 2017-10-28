@@ -48,6 +48,8 @@ public:
     dragType getDragType();
     QColor getPathColor();
 
+    QPointF getOffsettedHotSpot();
+
 private:
     toolType type;
     QImage *baseImage;

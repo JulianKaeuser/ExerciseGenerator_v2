@@ -32,6 +32,10 @@
 #include <memory>
 #include <list>
 //#include "smartpointers.h"
+#include "exercisegraphicsscene.h"
+#include "movementexerciseitem.h"
+#include "graphicsexerciseitem.h"
+#include "timeslotdata.h"
 
 #define PATH  ("/home/juliankaeuser/Dokumente/Eishockey/Coding/ExerciseGenerator_v2/imageSources/tempGif.gif")
 
@@ -799,18 +803,44 @@ void Ui_ExerciseMainWindow::buildTimeSlotsAnimations(){
     this->builtScenes = new SceneVector();
     this->builtSceneDurations = new std::vector<int>();
 
-    int maxNrTotal = 1;
+    int distancePerFrameInPixels = 10; //10 pixels per frame
+    qreal maxPathLengthInPixelsGlobal = 1;
     std::list<TimeslotData*> *sortList= new std::list<TimeslotData*>();
     for (auto iter = globaldata->timeslots->begin(); iter != globaldata->timeslots->end(); ++iter){
         sortList->emplace_back((*iter).second);
-        int t = (*iter).second->getMaxNumSteps();
-        if(t>maxNrTotal){
-            maxNrTotal = t;
+        qreal t = (*iter).second->scene->getMaxPathLength();
+        if(t>maxPathLengthInPixelsGlobal){
+            maxPathLengthInPixelsGlobal = t;
+        }//global
+        int numNecessaryFrames = t/distancePerFrameInPixels;
+        for(auto iterItems = (*iter).second->scene->getExerciseItems().begin(); iterItems!=(*iter).second->scene->getExerciseItems().end(); ++iter){
+            (*iterItems)->movementItem->insertEquidistantGridPoints(numNecessaryFrames);
 
         }
+
+
     }
     sortList->sort();
+    // found max Path length; determine t, steps accordingly
+   // int distancePerFrameInPixels = 10; //10 pixels per frame
 
+
+    /*
+     * for each timeslot
+     *    -> find maximum path length, determine number for EquiDistant step generation
+     *    -> determine step number according to max path length
+     * for each timeslot
+     *    -> compute equidistant insertions (trigger it)
+     *    -> for each item:
+     *       - store QPointF list separately
+     *       - delete movementItem
+     *    ->for (ii=0; ii< #stages; ii++)
+     *       - propagate each item to next point
+     *       - render image
+     *       - store to gif
+     *
+     *
+     */
 
 
 }; // buildTimeSlotsAnimations
@@ -856,6 +886,7 @@ void Ui_ExerciseMainWindow::storeCurrentProgressInGif(){
             ExerciseGraphicsScene *s = *iter;
             QImage *p = new QImage();
             QPainter *painter = new QPainter (p);
+             painter->setRenderHint(QPainter::Antialiasing);
             s->render(painter);
 
             QImage q = *p;
@@ -890,7 +921,7 @@ bool Ui_ExerciseMainWindow::isTextItem(){
  * @brief Ui_ExerciseMainWindow::getCurrentScene
  * @return
  */
-QGraphicsScene* Ui_ExerciseMainWindow::getCurrentScene() {
+ExerciseGraphicsScene* Ui_ExerciseMainWindow::getCurrentScene() {
     return this->currentScene;
 } // getCurrentScene
 
@@ -900,6 +931,7 @@ QGraphicsScene* Ui_ExerciseMainWindow::getCurrentScene() {
  */
 void Ui_ExerciseMainWindow::setMovewayClicked(bool clicked){
     this->itemMovewayClicked = clicked;
+    DEBUG(setMovewayClicked() called);
 }//setMovewayClicked
 
 /**
@@ -909,3 +941,4 @@ void Ui_ExerciseMainWindow::setMovewayClicked(bool clicked){
 bool Ui_ExerciseMainWindow::isMovewayClicked(){
     return this->itemMovewayClicked;
 } //isMovewayClicked
+

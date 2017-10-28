@@ -127,11 +127,12 @@ public:
 
     bool isTextItem();
 
-    QGraphicsScene* getCurrentScene();
+    ExerciseGraphicsScene* getCurrentScene();
 
     void setMovewayClicked(bool);
 
     bool isMovewayClicked();
+
 
 
 protected:

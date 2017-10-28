@@ -7,6 +7,7 @@
 #include "tool.h"
 #include <QGraphicsPixmapItem>
 #include <QImage>
+#include <QPointF>
 
 #include "graphicsexerciseitem.h"
 
@@ -25,6 +26,8 @@ public:
     bool isNotSingle;
     PointList *movementPoints;
     QImage const &  getIcon();
+
+    QPointF getMovementOffsetQPoint();
 
 private:
 
