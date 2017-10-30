@@ -296,7 +296,7 @@ void Tool::setRotation(int rotation){
  * @brief Tool::getColor
  * @return
  */
-QColor Tool::getColor(){
+QColor Tool::getColor() const{
     return this->color;
 } // getColor
 
@@ -304,7 +304,7 @@ QColor Tool::getColor(){
  * @brief Tool::getCurrentRotation
  * @return
  */
-int Tool::getCurrentRotation(){
+int Tool::getCurrentRotation() const{
     return currentRotation;
 } //getCurrentRotation
 
@@ -312,7 +312,7 @@ int Tool::getCurrentRotation(){
  * @brief Tool::getCursor
  * @return
  */
-QCursor* Tool::getCursor(){
+QCursor* Tool::getCursor() const{
     return this->cursor;
 } // getCursor
 
@@ -320,7 +320,7 @@ QCursor* Tool::getCursor(){
  * @brief Tool::getBaseImage
  * @return
  */
-QImage* Tool::getBaseImage(){
+QImage* Tool::getBaseImage() const{
     return this->baseImage;
 } // getBaseImage
 
@@ -336,7 +336,7 @@ void Tool::rotate(int degree){
  * @brief Tool::getDragType
  * @return
  */
-dragType Tool::getDragType(){
+dragType Tool::getDragType()const{
     return this->dragStatus;
 }//getDragType
 
@@ -344,7 +344,7 @@ dragType Tool::getDragType(){
  * @brief Tool::getPathColor
  * @return
  */
-QColor Tool::getPathColor(){
+QColor Tool::getPathColor() const{
 
     if(getDragType()==single){
         return Qt::black;
@@ -390,4 +390,15 @@ QColor Tool::getPathColor(){
     }
     return t;
 }//getPathColor
+
+/**
+ * @brief Tool::getOffsettedHotSpot
+ * @return
+ */
+QPointF Tool::getOffsettedHotSpot() const {
+    qreal dx = getCursor()->pixmap().width()/2;
+    qreal dy = getCursor()->pixmap().height()/2;
+    QPointF *p = new QPointF(dx, dy);
+    return *p;
+}//getOffsettedHotSpot()
 

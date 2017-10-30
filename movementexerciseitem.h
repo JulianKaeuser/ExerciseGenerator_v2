@@ -26,11 +26,12 @@ public:
 
     QRectF boundingRect() const;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
-    QPointF getEndPoint();
-    QPointFVector* getPoints();
+    QPointF getEndPoint() const;
+    QPointFVector* getPoints() const;
 
     qreal getPathLength() const;
     void insertEquidistantGridPoints(int numStagesTotal);
+    GraphicsExerciseItem* getGameObject() const;
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -48,7 +49,7 @@ public:
 
 private:
     GraphicsExerciseItem* gameObject;
-    QGraphicsScene* scene;
+    ExerciseGraphicsScene* scene;
     QPointF end;
     QPointFVector *points;
 

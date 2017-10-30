@@ -36,19 +36,19 @@ public:
     Tool(toolType, QColor, int);
     Tool (const Tool&);
     ~Tool();
-    toolType getToolType();
-    QImage* getBaseImage();
-    QColor getColor();
-    QCursor* getCursor();
-    int getCurrentRotation();
+    toolType getToolType() const;
+    QImage* getBaseImage() const;
+    QColor getColor() const;
+    QCursor* getCursor() const;
+    int getCurrentRotation() const;
     void setRotation(int);
     void setColor(QColor);
     void setType(toolType);
     void rotate(int);
-    dragType getDragType();
-    QColor getPathColor();
+    dragType getDragType() const;
+    QColor getPathColor() const;
 
-    QPointF getOffsettedHotSpot();
+    QPointF getOffsettedHotSpot() const;
 
 private:
     toolType type;

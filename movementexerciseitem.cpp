@@ -154,13 +154,14 @@ MovementExerciseItem::MovementExerciseItem(GraphicsExerciseItem *parentGameObjec
  */
 MovementExerciseItem::~MovementExerciseItem(){
     delete(points);
+    DEBUG(deleted MovementItem (destructor called));
 }// destructor
 
 /**
  * @brief MovementExerciseItem::setEnd
  * @param endPoint
  */
-void MovementExerciseItem::setEnd(QPointF endPoint){
+void MovementExerciseItem::setEnd(QPointF endPoint) {
     this->end = endPoint;
     points->clear();
 
@@ -228,9 +229,17 @@ void MovementExerciseItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
  * @brief MovementExerciseItem::getPoints
  * @return
  */
-QPointFVector* MovementExerciseItem::getPoints(){
+QPointFVector* MovementExerciseItem::getPoints() const{
     return this->points;
 } //getPoints;
+
+/**
+ * @brief MovementExerciseItem::getEndPoint
+ * @return
+ */
+QPointF MovementExerciseItem::getEndPoint() const{
+    return end;
+}//getEnd();
 
 /**
  * @brief MovementExerciseItem::mouseReleaseEvent
@@ -402,7 +411,13 @@ void MovementExerciseItem::insertEquidistantGridPoints(int numStagesTotal){
                     newX = a.x()-cos(atan(m))*stageLen;
                 }
 
-            }else{
+            }else if(dX==0 && dY == 0){
+                //same point at start and end;
+                newY = a.y();
+                newX = a.x();
+            }
+
+            else{
                 newY = a.y() > b.y() ? a.y() -stageLen : b.y()-stageLen;
                 newX = a.x() > b.x() ? a.y() -stageLen : b.y()-stageLen;
             }
@@ -421,3 +436,11 @@ void MovementExerciseItem::insertEquidistantGridPoints(int numStagesTotal){
     this->mw->graphicsView->viewport()->update();
 
 }//insertEquidistantGridPoints
+
+/**
+ * @brief MovementExerciseItem::gameObject
+ * @return
+ */
+GraphicsExerciseItem* MovementExerciseItem::getGameObject() const{
+    return this->gameObject;
+}//getGameObject

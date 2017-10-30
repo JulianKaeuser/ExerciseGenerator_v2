@@ -807,17 +807,53 @@ void Ui_ExerciseMainWindow::buildTimeSlotsAnimations(){
     qreal maxPathLengthInPixelsGlobal = 1;
     std::list<TimeslotData*> *sortList= new std::list<TimeslotData*>();
     for (auto iter = globaldata->timeslots->begin(); iter != globaldata->timeslots->end(); ++iter){
+        //iter = timeslot
         sortList->emplace_back((*iter).second);
         qreal t = (*iter).second->scene->getMaxPathLength();
         if(t>maxPathLengthInPixelsGlobal){
             maxPathLengthInPixelsGlobal = t;
         }//global
         int numNecessaryFrames = t/distancePerFrameInPixels;
-        for(auto iterItems = (*iter).second->scene->getExerciseItems().begin(); iterItems!=(*iter).second->scene->getExerciseItems().end(); ++iter){
-            (*iterItems)->movementItem->insertEquidistantGridPoints(numNecessaryFrames);
+        if(numNecessaryFrames<1) numNecessaryFrames = 1;
+        TimeslotData *sec = (*iter).second;
+        int numInnerRuns = 0;
+        for(auto iterItems = sec->scene->getExerciseItems()->begin(); iterItems!=sec->scene->getExerciseItems()->end(); ++iterItems){
+            (*iterItems)->arrangeMovement();
+            MovementExerciseItem *mItem = (*iterItems)->movementItem;
+            mItem->insertEquidistantGridPoints(numNecessaryFrames);
+            LDEBUG(numInnerRuns << " <- numInnerRuns");
+            numInnerRuns++;
+        }
+        //applied insertion successfully
+        for (int jj =-1; jj<numNecessaryFrames-2; jj++) // create new graphics scenes
+        {
+            //create t scenes
+            ExerciseGraphicsScene *dScene = new ExerciseGraphicsScene(centralWidget, this);
+            //for each item in the original scene
+            for(auto iterItems = sec->scene->getExerciseItems()->begin(); iterItems !=sec->scene->getExerciseItems()->end(); ++iterItems){
+                //create a copy of the original item
+                GraphicsExerciseItem *it = new GraphicsExerciseItem(*(*iterItems), dScene);
+                //add copy to the t'th scene
+                dScene->addExerciseItem(it);
+                //delete movement item (shall not be rendered
+                it->hasMovement = false;
+                delete(it->movementItem);
+                it->movementItem = Q_NULLPTR;
+
+                //set position of new item to next movement point
+                if(jj!=-1){
+                    QPointF p = (*iterItems)->movementItem->getPoints()->at(jj);
+                    p +=((*iterItems)->tool->getOffsettedHotSpot());
+                    it->setPos(p);
+                }
+                else{
+                    it->setPos((*iterItems)->movementItem->getGameObject()->scenePos()+=(*iterItems)->tool->getOffsettedHotSpot());
+                }
+            }
+            builtScenes->emplace_back(dScene);
+            builtSceneDurations->emplace_back(40);
 
         }
-
 
     }
     sortList->sort();
@@ -885,7 +921,7 @@ void Ui_ExerciseMainWindow::storeCurrentProgressInGif(){
             //DEBUG(in gif loop);
             ExerciseGraphicsScene *s = *iter;
             QImage *p = new QImage();
-            QPainter *painter = new QPainter (p);
+            QPainter *painter = new QPainter(p);
              painter->setRenderHint(QPainter::Antialiasing);
             s->render(painter);
 

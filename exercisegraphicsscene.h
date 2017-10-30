@@ -31,7 +31,8 @@ public:
 
     void addExerciseItem(GraphicsExerciseItem* item);
     void deleteExerciseItem(GraphicsExerciseItem* item);
-    std::vector<GraphicsExerciseItem*> getExerciseItems() const;
+    void deleteMovementItem(GraphicsExerciseItem* item);
+    std::vector<GraphicsExerciseItem*>* getExerciseItems() const;
 
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -40,7 +41,7 @@ public:
 
 private:
     Ui_ExerciseMainWindow *mw;
-    std::vector<GraphicsExerciseItem*> exerciseItems;
+    std::vector<GraphicsExerciseItem*>* exerciseItems;
 };
 
 #endif // EXERCISEGRAPHICSSCENE_H

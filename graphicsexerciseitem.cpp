@@ -47,7 +47,7 @@ GraphicsExerciseItem::GraphicsExerciseItem(const GraphicsExerciseItem &other, Ex
    image = new QImage(pix2);
    this->scene = scene;
    this->mw = other.mw;
-   this->tool = tool;
+   this->tool = other.tool;
 
 
 } // copy constructor
@@ -95,8 +95,7 @@ void GraphicsExerciseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(button==Qt::MiddleButton){
 
         if(this->hasMovement){
-            this->mw->getCurrentScene()->removeItem(this->movementItem);
-            delete(this->movementItem);
+            scene->deleteMovementItem(this);
             hasMovement = false;
         }
         scene->deleteExerciseItem(this);
@@ -104,12 +103,12 @@ void GraphicsExerciseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     else if(button==Qt::RightButton){
         if(hasMovement){
             if(movementItem!=Q_NULLPTR){
-              scene->removeItem(movementItem);
-              delete(movementItem);
+              scene->deleteMovementItem(this);
             }
             movementItem = new MovementExerciseItem(this, mw, event->scenePos());
             scene->addItem(movementItem);
             movementItem->setZValue(0);
+            hasMovement = true;
 
 
         }
@@ -168,6 +167,17 @@ void GraphicsExerciseItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         mw->graphicsView->viewport()->update();
 
 } //mouseMoveEvent
+
+/**
+ * @brief GraphicsExerciseItem::arrangeMovement
+ */
+void GraphicsExerciseItem::arrangeMovement(){
+    if(hasMovement) return;
+    else{
+        movementItem = new MovementExerciseItem(this, this->mw, this->scenePos());
+        DEBUG(arrangeMovement);
+    }
+}// arrangeMovement
 
 
 

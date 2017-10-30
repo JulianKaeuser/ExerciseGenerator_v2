@@ -36,6 +36,7 @@ public:
     bool hasMovement = false;
     Tool* tool = Q_NULLPTR;
     MovementExerciseItem* movementItem = Q_NULLPTR;
+    void arrangeMovement();
 
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);

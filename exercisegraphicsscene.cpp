@@ -10,6 +10,7 @@
  */
 ExerciseGraphicsScene::ExerciseGraphicsScene(QObject *parent, Ui_ExerciseMainWindow* mw): QGraphicsScene(parent){
     this->mw = mw;
+    this->exerciseItems = new std::vector<GraphicsExerciseItem*>();
 }// constructor
 
 /**
@@ -18,6 +19,7 @@ ExerciseGraphicsScene::ExerciseGraphicsScene(QObject *parent, Ui_ExerciseMainWin
 ExerciseGraphicsScene::ExerciseGraphicsScene(Ui_ExerciseMainWindow* mw) : QGraphicsScene()
 {
     this->mw = mw;
+    this->exerciseItems = new std::vector<GraphicsExerciseItem*>();
 }// constructor
 
 /**
@@ -94,7 +96,7 @@ void ExerciseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 qreal ExerciseGraphicsScene::getMaxPathLength(){
 
     qreal maxLen = 0;
-    for(auto iter = this->exerciseItems.begin(); iter!=this->exerciseItems.end(); ++iter){
+    for(auto iter = this->exerciseItems->begin(); iter!=this->exerciseItems->end(); ++iter){
         if((*iter)->hasMovement){
             qreal len = (*iter)->movementItem->getPathLength();
             if(len>maxLen){
@@ -110,7 +112,7 @@ qreal ExerciseGraphicsScene::getMaxPathLength(){
  */
 void ExerciseGraphicsScene::addExerciseItem(GraphicsExerciseItem *item){
     this->addItem(item);
-    this->exerciseItems.emplace_back(item);
+    this->exerciseItems->emplace_back(item);
 }//addExerciseItem
 
 /**
@@ -119,9 +121,9 @@ void ExerciseGraphicsScene::addExerciseItem(GraphicsExerciseItem *item){
  */
 void ExerciseGraphicsScene::deleteExerciseItem(GraphicsExerciseItem *item){
     this->removeItem(item);
-    for (auto iter = exerciseItems.begin(); iter!=exerciseItems.end(); ++iter){
+    for (auto iter = exerciseItems->begin(); iter!=exerciseItems->end(); ++iter){
         if((*iter)==item){
-            this->exerciseItems.erase(iter);
+            this->exerciseItems->erase(iter);
             break;
             delete(item);
         }
@@ -130,9 +132,19 @@ void ExerciseGraphicsScene::deleteExerciseItem(GraphicsExerciseItem *item){
 }// deleteExerciseItem
 
 /**
+ * @brief ExerciseGraphicsScene::deleteMovementItem
+ * @param item
+ */
+void ExerciseGraphicsScene::deleteMovementItem(GraphicsExerciseItem* item){
+    this->removeItem(item->movementItem);
+    delete(item->movementItem);
+    item->hasMovement = false;
+}//deleteExerciseItem
+
+/**
  * @brief ExerciseGraphicsScene::getExerciseItems
  * @return
  */
-std::vector<GraphicsExerciseItem*> ExerciseGraphicsScene::getExerciseItems() const{
+std::vector<GraphicsExerciseItem*>* ExerciseGraphicsScene::getExerciseItems() const{
     return this->exerciseItems;
 }//getExerciseItems
